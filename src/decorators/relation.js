@@ -7,3 +7,6 @@ export default function method(options) {
     // default one)
   };
 }
+// hasA and hasMany
+// ownsOne and ownsMany
+// belongsTo

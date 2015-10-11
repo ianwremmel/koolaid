@@ -28,10 +28,13 @@
   },
   "dependencies": {
     "babel": "~5.8.23",
+    "chai-as-promised": "~5.1.0",
     "continuation-local-storage": "~3.1.4",
+    "extend-error": "git://github.com/ianwremmel/extend-error.git",
     "lodash": "~3.10.1",
     "ramda": "~0.17.1",
-    "require-dir": "~0.3.0"
+    "require-dir": "~0.3.0",
+    "sinon": "~1.17.1"
   },
   "peerDependencies": {
     "express": "4.x"

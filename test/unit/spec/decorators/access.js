@@ -3,7 +3,8 @@ import AA from '../../fixtures/aa';
 import AAA from '../../fixtures/aaa';
 
 import {assert} from 'chai';
-import {getAccessForMethod} from '../../../../src/decorators/access';
+import {getAccessForMethod, setAccessCallback} from '../../../../src/decorators/access';
+import {Forbidden} from '../../../../src/lib/http-error';
 
 describe('full-koolaid', () => {
   describe('@access', () => {
@@ -25,6 +26,25 @@ describe('full-koolaid', () => {
       assert.equal(getAccessForMethod(AAA, 'update'), 'write');
       assert.equal(getAccessForMethod(AAA.prototype, 'update'), 'write');
       assert.equal(getAccessForMethod(AAA, 'exists'), 'execute');
+    });
+
+    it('controls who can invoke certain methods', () => {
+      setAccessCallback(() => true);
+
+      const a = new A();
+
+      return assert.isFulfilled(A.create())
+        .then(() => {
+          setAccessCallback(() => false);
+          return assert.isRejected(A.create(), Forbidden);
+        })
+        .then(() => {
+          return assert.isRejected(a.update(), Forbidden);
+        })
+        .then(() => {
+          setAccessCallback(() => true);
+          return assert.isFulfilled(a.update());
+        });
     });
   });
 });
