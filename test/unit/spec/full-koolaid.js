@@ -1,0 +1,253 @@
+/* eslint-disable */
+
+import {assert} from 'chai'
+import {access, method, param, relation, resource} from '../../..'
+import {getRoutingTable} from '../../../src/lib/routing-table'
+
+describe('full-koolaid', () => {
+  describe('@resource', () => {
+    @resource({basePath: 'a'})
+    class A {
+      @access('write')
+      @method({verb: 'POST', path: '/'})
+      @param({source: 'body'})
+      static create(data, ctx) {
+
+      }
+
+      @access('write')
+      @method({verb: 'POST', path: '/'})
+      @param({source: 'body'})
+      @param({source: 'query', name: 'filter'})
+      static update(data, filter, ctx) {
+
+      }
+
+      @access('write')
+      @method({verb: 'PUT', path: '/:id'})
+      @param({source: 'body'})
+      update(data, ctx) {
+
+      }
+    }
+
+    @resource({basePath: 'aa'})
+    class AA extends A {
+      @access('read')
+      @method({verb: 'HEAD', path: '/:id'})
+      @method({verb: 'GET', path: '/:id/exists'})
+      static exists(ctx) {
+
+      }
+    }
+
+    @relation({name: 'b', class: B, type: 'hasOne'})
+    @relation({name: 'c', class: C, type: 'hasMany'})
+    class AAA extends AA {
+      @access('execute')
+      static exists(ctx) {
+
+      }
+    }
+
+    @resource({basePath: 'b'})
+    class B {
+      @access('read')
+      @method({verb: 'GET', path: '/:id'})
+      find(ctx) {
+
+      }
+    }
+
+    @resource({basePath: 'c'})
+    class C {
+      @access('read')
+      @method({verb: 'GET', path: '/'})
+      static find(ctx) {
+
+      }
+    }
+
+    it('produces the correct routing table for a resource', () => {
+      assert.deepEqual(getRoutingTable(A), {
+        methods: {
+          create: {
+            true: [{
+              params: [{
+                source: 'body'
+              }],
+              accessType: 'write',
+              path: '/',
+              verb: 'post',
+            }]
+          },
+          update: {
+            true: [{
+              params: [{
+                source: 'body'
+              }, {
+                name: 'filter',
+                source: 'query'
+              }],
+              accessType: 'write',
+              path: '/',
+              verb: 'post'
+            }],
+            false: [{
+              params: [{
+                source: 'body'
+              }],
+              accessType: 'write',
+              path: '/:id',
+              verb: 'put'
+            }]
+          }
+        },
+        basePath: 'a'
+      });
+    });
+
+    it('produces the correct routing table for a derived resource', () => {
+      assert.deepEqual(getRoutingTable(AA), {
+        methods: {
+          create: {
+            true: [{
+              params: [{
+                source: 'body'
+              }],
+              accessType: 'write',
+              path: '/',
+              verb: 'post',
+            }]
+          },
+          update: {
+            true: [{
+              params: [{
+                source: 'body'
+              }, {
+                name: 'filter',
+                source: 'query'
+              }],
+              accessType: 'write',
+              path: '/',
+              verb: 'post'
+            }],
+            false: [{
+              params: [{
+                source: 'body'
+              }],
+              accessType: 'write',
+              path: '/:id',
+              verb: 'put'
+            }]
+          },
+          exists: {
+            true: [{
+              accessType: 'read',
+              path: '/:id/exists',
+              verb: 'get'
+            }, {
+              accessType: 'read',
+              path: '/:id',
+              verb: 'head'
+            }]
+          }
+        },
+        basePath: 'aa'
+      });
+    });
+
+    it.skip('produces the correct routing table for a derived resource with relations', () => {
+      assert.deepEqual(getRoutingTable(AAA), {
+        methods: {
+          create: {
+            true: [{
+              params: [{
+                source: 'body'
+              }],
+              accessType: 'write',
+              path: '/',
+              verb: 'post',
+            }]
+          },
+          update: {
+            true: [{
+              params: [{
+                source: 'body'
+              }, {
+                name: 'filter',
+                source: 'query'
+              }],
+              accessType: 'write',
+              path: '/',
+              verb: 'post'
+            }],
+            false: [{
+              params: [{
+                source: 'body'
+              }],
+              accessType: 'write',
+              path: '/:id',
+              verb: 'put'
+            }]
+          },
+          exists: {
+            true: [{
+              accessType: 'execute',
+              path: '/:id',
+              verb: 'head'
+            }, {
+              accessType: 'execute',
+              path: '/:id/exists',
+              verb: 'get'
+            }]
+          }
+        },
+        relations: {
+          b: {
+            type: 'hasOne',
+            class: B,
+            accessType: 'read'
+          },
+          c: {
+            type: 'hasMany',
+            class: C,
+            accessType: 'read'
+          }
+        },
+        basePath: 'aa'
+
+      });
+
+    });
+
+  });
+});
+
+// TODO consider a decorator that prevents base classes from getting routes.
+// TODO consider `expose` property (prevents routing but setups up access,
+// relations) on @resource
+// TODO create a @document decorator (or `document` property on @resource) which
+// generates RAML or Swagger
+// TODO @resource should evaluate the routing table and confirm a minimal set of
+// RESTful routes have been defined
+// A
+// POST /a/ A.create A:write [body]
+// POST /a/ A.update A:write [body, query.filter]
+// PUT /a/:id A#update A:id:write [body]
+//
+// AA
+// POST /aa/ A.create AA:write [body]
+// POST /aa/ A.update AA:write [body, query.filter]
+// PUT /aa/:id A#update AA:id:write [body]
+// HEAD /aa/:id AA.exists AA:id:read
+// GET /aa/:id/exists AA.exists AA:id:read
+//
+// AAA
+// POST /aa/ A.create AAA:write [body]
+// POST /aa/ A.update AAA:write [body, query.filter]
+// PUT /aa/:id A#update AAA:id:write [body]
+// HEAD /aa/:id AA.exists AAA:id:execute
+// GET /aa/:id/exists AA.exists AAA:id:execute
+// GET /aa/:id/b/:id B#find AAA:id:read,B:id:read
+// GET /aa/:id/c/ C.find AAA:id:read,C:read

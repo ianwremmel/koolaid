@@ -1,0 +1,76 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "ecmaFeatures": {
+    "blockBindings": true,
+    "modules": true
+  },
+  "extends": "eslint:recommended",
+  "parser": "babel-eslint",
+  "rules": {
+    "arrow-parens": [2, "always"],
+    "arrow-spacing": [2],
+    "brace-style": [2, "stroustrup", {
+      "allowSingleLine": true
+    }],
+    "callback-return": [2],
+    "camelcase": [2, {
+      "properties": "never"
+    }],
+    "comma-style": [2, "last"],
+    "complexity": [2, 7],
+    "constructor-super": [2],
+    "curly": [2],
+    "eqeqeq": [2],
+    "func-style": [2, "declaration"],
+    "strict": [2, "global"],
+    "guard-for-in": [2],
+    "handle-callback-err": [2],
+    "quotes": [2, "single", "avoid-escape"],
+    "max-params": [2, 4],
+    "max-depth": [2, 5],
+    "max-statements": [2, 30],
+    "new-cap": [2, {
+      "newIsCap": true,
+      "capIsNew": true,
+      "capIsNewExceptions": [
+        "Router",
+        "S"
+      ]
+    }],
+    "no-bitwise": [2],
+    "no-caller": [2],
+    "no-catch-shadow": [2],
+    "no-console": [2],
+    "no-class-assign": [2],
+    "no-const-assign": [2],
+    "no-dupe-class-members": [2],
+    "no-empty": [2],
+    "no-extend-native": [2],
+    "no-inline-comments": [2],
+    "no-nested-ternary": [2],
+    "no-shadow": [0],
+    "no-this-before-super": [2],
+    "no-underscore-dangle": [0],
+    "no-undef": [2],
+    "no-unused-expressions": [2],
+    "no-unused-vars": [2],
+    "no-use-before-define": [2, "nofunc"],
+    "no-var": [2],
+    "object-shorthand": [2],
+    "prefer-arrow-callback": [2],
+    "prefer-const": [2],
+    "prefer-spread": [2],
+    "prefer-template": [2],
+    "require-yield": [2],
+    "quote-props": [2, "as-needed"],
+    "semi": [2, "always"],
+    "spaced-comment": [2, "always", {
+      "markers": ["*!"]
+    }],
+    "space-infix-ops": [0],
+    "wrap-iife": [2]
+  }
+}
