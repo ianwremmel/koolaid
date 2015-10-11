@@ -3,9 +3,12 @@
 import {assert} from 'chai'
 import {access, method, param, relation, resource} from '../../..'
 import {getRoutingTable} from '../../../src/lib/routing-table'
+import A from '../fixtures/a';
+import AA from '../fixtures/aa';
+import AAA from '../fixtures/aaa';
 
 describe('full-koolaid', () => {
-  describe.skip('@resource', () => {
+  describe('@resource', () => {
 
     it('produces the correct routing table for a resource', () => {
       assert.deepEqual(getRoutingTable(A), {

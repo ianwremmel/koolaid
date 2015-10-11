@@ -8,15 +8,13 @@ export default function method(options) {
   }
 
   if (!options.path) {
-    throw new Error('`options.path` is required');
+    options.path = '/';
   }
 
   return function(target, name) {
     const method = getCurrentMethod(target, name);
-    Object.assign(method, {
-      path: options.path.toLowerCase(),
-      verb: options.verb.toLowerCase()
-    });
+    method.set('path', options.path.toLowerCase());
+    method.set('verb', options.verb.toLowerCase());
     finishCurrentMethod(target, name);
   };
 }

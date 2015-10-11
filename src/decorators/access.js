@@ -1,3 +1,4 @@
+import {findOrCreateMap} from '../lib/map';
 import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
 
@@ -41,14 +42,6 @@ export default function access(accessType) {
   };
 }
 
-function findOrCreateMap(map, key) {
-  let value = map.get(key);
-  if (!value) {
-    value = new Map();
-    map.set(key, value);
-  }
-  return value;
-}
 
 function setAccessForMethod(target, name, accessType) {
   const accessTableForTarget = findOrCreateMap(accessTable, target);

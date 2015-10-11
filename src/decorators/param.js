@@ -9,7 +9,11 @@ export default function method(options) {
 
   return function(target, name) {
     const method = getCurrentMethod(target, name);
-    method.params = method.params || [];
-    method.params.unshift(options);
+    let params = method.get('params');
+    if (!params) {
+      params = [];
+      method.set('params', params);
+    }
+    params.unshift(options);
   };
 }

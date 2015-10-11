@@ -1,86 +1,74 @@
 import _ from 'lodash';
+import {findOrCreateMap} from './map';
+import {getAccessForMethod} from '../decorators/access';
 import isStatic from './is-static';
 
-const models = new WeakMap();
-const currentMethods = new WeakMap();
-
 export function getRoutingTable(target) {
-  const tables = [];
+  const tables = {
+    methods: {}
+  };
+
   let key = target;
   while (key !== (key && key.constructor)) {
     const table = getTableForModel(key);
+    tables.basePath = tables.basePath || table.basePath;
+    merge(tables.methods, table);
     key = Object.getPrototypeOf(key);
   }
 
-  const table = {};// _.mergeAll(tables);
-  while(tables.length) {
-    _.merge(table, tables.pop());
+  return tables;
+
+  function merge(dest, source) {
+    source.forEach((value, methodName) => {
+      dest[methodName] = dest[methodName] || {};
+      value.forEach((value, isStatic) => {
+        if (value.has('methods')) {
+          const routes = dest[methodName][isStatic] = dest[methodName][isStatic] || [];
+          value.get('methods').forEach((method) => {
+            const route = {
+              accessType: getAccessForMethod(target, methodName),
+              path: method.get('path'),
+              verb: method.get('verb')
+            };
+
+            if (method.has('params')) {
+              route.params = method.get('params');
+            }
+            routes.push(route);
+          });
+        }
+      });
+    });
   }
-  return table;
-
-  //
-  // console.log(JSON.stringify(tables, null, 2));
-  //
-  // const routingTable = tables.reduce((routingTable, currentTable) => {
-  //   routingTable.basePath = currentTable.basePath || routingTable.basePath;
-  //   console.log(currentTable);
-  //   if (currentTable.methods) {
-  //     routingTable.methods = Object.keys(currentTable.methods).reduce((methods, methodName) => {
-  //       methods[methodName] = methods[methodName] || {};
-  //       [true, false].forEach((isStatic) => {
-  //         if (currentTable.methods[methodName][isStatic]) {
-  //           methods[methodName][isStatic] = methods[methodName][isStatic] || {};
-  //
-  //           ['access', 'param', 'path', 'verb'].forEach((key) => {
-  //             console.log(methodName, isStatic, key, currentTable.methods[methodName][isStatic]);
-  //             methods[methodName][isStatic][key] = currentTable.methods[methodName][isStatic][key] || methods[methodName][isStatic][key];
-  //           });
-  //         }
-  //       });
-  //       return methods;
-  //     }, routingTable.methods || {});
-  //   }
-  //   return routingTable;
-  //
-  // }, {});
-
-  // return routingTable;
 }
 
+
+
+const tables = new Map();
 export function getTableForModel(target) {
-  const key = isStatic(target) ? target : target.constructor;
-  let table = models.get(key);
-  if (!table) {
-    table = {};
-    models.set(key, table);
-  }
-  return table;
+  return findOrCreateMap(tables, isStatic(target) ? target : target.constructor);
 }
 
 function getTableForMethod(target, name) {
   const table = getTableForModel(target);
-
-  table.methods = table.methods || {};
-  table.methods[name] = table.methods[name] || {};
-
-  const methodIsStatic = isStatic(target);
-  table.methods[name][methodIsStatic] = table.methods[name][methodIsStatic] || [];
-  return table.methods[name][methodIsStatic];
+  const methodTable = findOrCreateMap(table, name);
+  return findOrCreateMap(methodTable, isStatic(target));
 }
 
+const currentMethods = new Map();
 export function getCurrentMethod(target, name) {
   const table = getTableForMethod(target, name);
-  let current = currentMethods.get(table);
-  if (!current) {
-    current = {};
-    table.push(current);
-    currentMethods.set(table, current);
-  }
-
-  return current;
+  return findOrCreateMap(currentMethods, table);
 }
 
 export function finishCurrentMethod(target, name) {
   const table = getTableForMethod(target, name);
+  const current = getCurrentMethod(target, name);
   currentMethods.delete(table);
+  let methods = table.get('methods');
+  if (!methods) {
+    methods = [];
+    table.set('methods', methods);
+  }
+  methods.push(current);
 }
