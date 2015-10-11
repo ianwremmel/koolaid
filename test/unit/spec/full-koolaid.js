@@ -5,68 +5,7 @@ import {access, method, param, relation, resource} from '../../..'
 import {getRoutingTable} from '../../../src/lib/routing-table'
 
 describe('full-koolaid', () => {
-  describe('@resource', () => {
-    @resource({basePath: 'a'})
-    class A {
-      @access('write')
-      @method({verb: 'POST', path: '/'})
-      @param({source: 'body'})
-      static create(data, ctx) {
-
-      }
-
-      @access('write')
-      @method({verb: 'POST', path: '/'})
-      @param({source: 'body'})
-      @param({source: 'query', name: 'filter'})
-      static update(data, filter, ctx) {
-
-      }
-
-      @access('write')
-      @method({verb: 'PUT', path: '/:id'})
-      @param({source: 'body'})
-      update(data, ctx) {
-
-      }
-    }
-
-    @resource({basePath: 'aa'})
-    class AA extends A {
-      @access('read')
-      @method({verb: 'HEAD', path: '/:id'})
-      @method({verb: 'GET', path: '/:id/exists'})
-      static exists(ctx) {
-
-      }
-    }
-
-    @relation({name: 'b', class: B, type: 'hasOne'})
-    @relation({name: 'c', class: C, type: 'hasMany'})
-    class AAA extends AA {
-      @access('execute')
-      static exists(ctx) {
-
-      }
-    }
-
-    @resource({basePath: 'b'})
-    class B {
-      @access('read')
-      @method({verb: 'GET', path: '/:id'})
-      find(ctx) {
-
-      }
-    }
-
-    @resource({basePath: 'c'})
-    class C {
-      @access('read')
-      @method({verb: 'GET', path: '/'})
-      static find(ctx) {
-
-      }
-    }
+  describe.skip('@resource', () => {
 
     it('produces the correct routing table for a resource', () => {
       assert.deepEqual(getRoutingTable(A), {

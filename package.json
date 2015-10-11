@@ -4,7 +4,7 @@
   "description": "RESTfu modeling framework for express that drank all the es6+ koolaid",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel/register test/*/spec",
+    "test": "mocha --compilers js:babel/register test/*/spec/**",
     "post-test": "eslint src/** test/** Gruntfile.js",
     "watch": "nodemon -w src -w test -x npm test"
   },
