@@ -10,9 +10,8 @@ import queryStringNumbers from './lib/query-string-numbers';
 import relation from './decorators/relation';
 import requireDir from 'require-dir';
 import resource from './decorators/resource';
-import {setContext} from './decorators/resource'
 
-export default function loadModels(options) {
+export default function fullKoolaid(options) {
   if (!options.models) {
     throw new Error('`options.models` is required');
   }
@@ -24,7 +23,6 @@ export default function loadModels(options) {
   const router = express.Router();
 
   const ctx = cls.createNamespace('ctx');
-  setContext(ctx);
 
   Object.keys(models).reduce((router, modelName) => {
     const model = models[modelName];
@@ -46,7 +44,7 @@ export default function loadModels(options) {
       } = row;
 
       router[verb](path, (req, res, next) => {
-        ctx.run((c) => {
+        ctx.run(() => {
           new Promise((resolve) => {
             ctx.set('Model', target);
             ctx.set('user', req.user);
@@ -111,7 +109,7 @@ export default function loadModels(options) {
 }
 
 // Apparently, `import a from 'a'; export a;` doesn't work.
-Object.assign(loadModels, {
+Object.assign(fullKoolaid, {
   access,
   method,
   param,

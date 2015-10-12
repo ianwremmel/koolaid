@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import cls from 'continuation-local-storage';
 import {getTableForModel} from '../lib/routing-table';
 
 export default function method(options) {
@@ -16,11 +17,6 @@ export default function method(options) {
       contextualize(target, target);
     }
   };
-}
-
-let ctx = {};
-export function setContext(context) {
-  ctx = context;
 }
 
 const contextualized = new WeakMap();
@@ -60,6 +56,7 @@ function decorateMethod(obj, name, target) {
   const value = descriptor.value;
   if (typeof value === 'function' && (!target[name] || obj[name] === target[name])) {
     descriptor.value = _.wrap(value, function(fn, ...args) {
+      const ctx = cls.getNamespace('ctx');
       return fn.call(this, ...args, (typeof ctx === 'function' ? ctx() : ctx));
     });
     Object.defineProperty(target, name, descriptor);
