@@ -4,6 +4,21 @@ const HttpError = extendError({
   subTypeName: 'HttpError'
 });
 
+export function middleware() {
+  return function(err, req, res, next) {
+    if (!(err instanceof HttpError)) {
+      return next(err);
+    }
+
+    return res
+      .status(err.code)
+      .json({
+        error: err.toString()
+      })
+      .end();
+  };
+}
+
 const BadRequest = extendError(HttpError, {
   subTypeName: 'BadRequest',
   properties: {

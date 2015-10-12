@@ -168,7 +168,7 @@ describe('full-koolaid', () => {
         assert.deepEqual(getFlatRoutingTable(A), [{
           accessType: 'write',
           verb: 'put',
-          path: 'a/:id',
+          path: '/a/:id',
           methodName: 'update',
           isStatic: false,
           params: [
@@ -177,7 +177,7 @@ describe('full-koolaid', () => {
         }, {
           accessType: 'write',
           verb: 'post',
-          path: 'a/',
+          path: '/a/',
           methodName: 'update',
           isStatic: true,
           params: [
@@ -190,7 +190,7 @@ describe('full-koolaid', () => {
         }, {
           accessType: 'write',
           verb: 'post',
-          path: 'a/',
+          path: '/a/',
           methodName: 'create',
           isStatic: true,
           params: [

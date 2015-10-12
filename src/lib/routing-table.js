@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {findOrCreateMap} from './map';
 import {getAccessForMethod} from '../decorators/access';
 import isStatic from './is-static';
@@ -51,7 +50,7 @@ export function getFlatRoutingTable(target) {
     Object.keys(routingTable.methods[methodName]).forEach((isStatic) => {
       isStatic = isStatic === 'true';
       table.push(Object.assign({}, routingTable.methods[methodName][isStatic][0], {
-        path: path.join(basePath, routingTable.methods[methodName][isStatic][0].path),
+        path: path.join('/', basePath, routingTable.methods[methodName][isStatic][0].path),
         methodName,
         isStatic
       }));

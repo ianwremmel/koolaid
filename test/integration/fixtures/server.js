@@ -1,9 +1,13 @@
+import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
 import express from 'express';
 import fullKoolaid from '../../..';
+import morgan from 'morgan';
 import path from 'path';
 
 const app = module.exports = express();
+app.use(morgan('dev'));
+app.use(bodyParser());
 app.use(fullKoolaid({
   models: path.join(__dirname, 'models')
 }));
