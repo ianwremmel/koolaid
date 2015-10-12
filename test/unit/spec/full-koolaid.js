@@ -2,7 +2,7 @@
 
 import {assert} from 'chai'
 import {access, method, param, relation, resource} from '../../..'
-import {getRoutingTable} from '../../../src/lib/routing-table'
+import {getRoutingTable, getFlatRoutingTable} from '../../../src/lib/routing-table'
 import A from '../fixtures/a';
 import AA from '../fixtures/aa';
 import AAA from '../fixtures/aaa';
@@ -163,6 +163,42 @@ describe('full-koolaid', () => {
 
     });
 
+    describe('getFlatRoutingTable', () => {
+      it('produces the correct routing table for a resource', () => {
+        assert.deepEqual(getFlatRoutingTable(A), [{
+          accessType: 'write',
+          verb: 'put',
+          path: 'a/:id',
+          methodName: 'update',
+          isStatic: false,
+          params: [
+            {source: 'body'}
+          ]
+        }, {
+          accessType: 'write',
+          verb: 'post',
+          path: 'a/',
+          methodName: 'update',
+          isStatic: true,
+          params: [
+            {source: 'body'},
+            {
+              name: 'filter',
+              source: 'query'
+            }
+          ]
+        }, {
+          accessType: 'write',
+          verb: 'post',
+          path: 'a/',
+          methodName: 'create',
+          isStatic: true,
+          params: [
+            {source: 'body'}
+          ]
+        }]);
+      });
+    });
   });
 });
 

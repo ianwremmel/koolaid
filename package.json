@@ -13,8 +13,10 @@
   "devDependencies": {
     "babel-eslint": "~4.1.3",
     "chai": "~3.3.0",
+    "errorhandler": "~1.4.2",
     "eslint": "~1.6.0",
     "eslint-plugin-mocha": "~1.0.0",
+    "express": "~4.13.3",
     "grunt": "~0.4.5",
     "grunt-cli": "~0.1.13",
     "grunt-eslint": "~17.2.0",
@@ -33,8 +35,7 @@
     "extend-error": "git://github.com/ianwremmel/extend-error.git",
     "lodash": "~3.10.1",
     "ramda": "~0.17.1",
-    "require-dir": "~0.3.0",
-    "sinon": "~1.17.1"
+    "require-dir": "~0.3.0"
   },
   "peerDependencies": {
     "express": "4.x"

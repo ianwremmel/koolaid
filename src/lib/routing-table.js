@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {findOrCreateMap} from './map';
 import {getAccessForMethod} from '../decorators/access';
 import isStatic from './is-static';
+import path from 'path';
 
 export function getRoutingTable(target) {
   const tables = {
@@ -42,7 +43,22 @@ export function getRoutingTable(target) {
   }
 }
 
-
+export function getFlatRoutingTable(target) {
+  const table = [];
+  const routingTable = getRoutingTable(target);
+  const basePath = routingTable.basePath;
+  Object.keys(routingTable.methods).forEach((methodName) => {
+    Object.keys(routingTable.methods[methodName]).forEach((isStatic) => {
+      isStatic = isStatic === 'true';
+      table.push(Object.assign({}, routingTable.methods[methodName][isStatic][0], {
+        path: path.join(basePath, routingTable.methods[methodName][isStatic][0].path),
+        methodName,
+        isStatic
+      }));
+    });
+  });
+  return table;
+}
 
 const tables = new Map();
 export function getTableForModel(target) {
