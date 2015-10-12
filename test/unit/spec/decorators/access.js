@@ -33,17 +33,17 @@ describe('full-koolaid', () => {
 
       const a = new A();
 
-      return assert.isFulfilled(A.create())
+      return assert.isFulfilled(A.create({}))
         .then(() => {
           setAccessCallback(() => false);
-          return assert.isRejected(A.create(), Forbidden);
+          return assert.isRejected(A.create({}), Forbidden);
         })
         .then(() => {
-          return assert.isRejected(a.update(), Forbidden);
+          return assert.isRejected(a.update({}), Forbidden);
         })
         .then(() => {
           setAccessCallback(() => true);
-          return assert.isFulfilled(a.update());
+          return assert.isFulfilled(a.update({}));
         });
     });
   });
