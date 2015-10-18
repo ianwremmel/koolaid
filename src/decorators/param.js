@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {BadRequest} from '../lib/http-error';
-import {getCurrentMethod} from '../lib/routing-table';
+import {getCurrentMethod, getRoutingTable} from '../lib/routing-table';
+import isStatic from '../lib/is-static';
 
 export default function method(options) {
   options = options || {};
@@ -9,7 +10,7 @@ export default function method(options) {
     throw new Error('`options.source` is required');
   }
 
-  return function(target, name, descriptor) {
+  return function(target, name) {
     const method = getCurrentMethod(target, name);
     let params = method.get('params');
     if (!params) {
@@ -17,16 +18,19 @@ export default function method(options) {
       method.set('params', params);
     }
     params.unshift(options);
-
-    // FIXME apply at leaf method
-    const value = descriptor.value;
-    descriptor.value = _.wrap(value, (fn, ...args) => {
-      // add 1 to account for ctx
-      if (args.length !== (params.length + 1)) {
-        // TODO attempt to generate error string
-        throw new BadRequest();
-      }
-      return fn(...args);
-    });
   };
+}
+
+export function wrap(target, name, descriptor) {
+  descriptor.value = _.wrap(descriptor.value, function(fn, ...args) {
+    const method = getRoutingTable(target).methods[name];
+    if (method) {
+      const params = method[isStatic(target, name)][0].params;
+      if (params && args.length !== params.length) {
+        throw new BadRequest('One or more required parameters are missing');
+      }
+    }
+
+    return fn.call(this, ...args);
+  });
 }

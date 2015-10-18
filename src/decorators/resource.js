@@ -2,6 +2,7 @@ import _ from 'lodash';
 import cls from 'continuation-local-storage';
 import {getTableForModel} from '../lib/routing-table';
 import {wrap as access} from './access';
+import {wrap as param} from './param';
 
 export default function method(options) {
   options = options || {};
@@ -22,11 +23,8 @@ export default function method(options) {
 
 const contextualized = new WeakMap();
 function contextualize(obj, target) {
-  // Yep, the double negation here is kinda weird. Basically, it means "keep
-  // going if obj is not its own constructor"; doing the negation this way
-  // lets me write the next iteration as a tail call which, supposedly,
-  // optimizes better.
-  if (!(obj !== (obj && obj.constructor))) {
+  // Make sure we stop before attemping to decorate the native Object
+  if (obj === Object.getPrototypeOf(Object)) {
     return;
   }
 
@@ -36,32 +34,33 @@ function contextualize(obj, target) {
 
   contextualized.set(obj);
 
-  decorateObject(obj, target);
+  contextualizeObject(obj, target);
   if (obj.prototype) {
-    decorateObject(obj.prototype, target.prototype);
+    contextualizeObject(obj.prototype, target.prototype);
   }
 
   contextualize(Object.getPrototypeOf(obj), target);
 }
 
-function decorateObject(obj, target) {
+function contextualizeObject(obj, target) {
   Object.getOwnPropertyNames(obj).forEach((name) => {
     if (!_.contains(['constructor', 'prototype', 'length'], name)) {
-      decorateMethod(obj, name, target);
+      contextualizeMethod(obj, name, target);
     }
   });
 }
 
-function decorateMethod(obj, name, target) {
+function contextualizeMethod(obj, name, target) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, name);
-  const value = descriptor.value;
-  if (typeof value === 'function' && (!target[name] || obj[name] === target[name])) {
+  if (typeof descriptor.value === 'function' && (!target[name] || obj[name] === target[name])) {
+
     // Reminder: wrappers are executed bottom to top.
-    descriptor.value = _.wrap(value, function(fn, ...args) {
+    descriptor.value = _.wrap(descriptor.value, function(fn, ...args) {
       const ctx = cls.getNamespace('ctx');
       return fn.call(this, ...args, (typeof ctx === 'function' ? ctx() : ctx));
     });
 
+    param(target, name, descriptor);
     access(target, name, descriptor);
 
     Object.defineProperty(target, name, descriptor);
