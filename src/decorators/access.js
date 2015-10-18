@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {findOrCreateMap} from '../lib/map';
 import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
@@ -21,21 +22,27 @@ export default function access(accessType) {
     throw new Error('`accessType` is required');
   }
 
-  return function(target, name, descriptor) {
+  return function(target, name) {
     setAccessForMethod(target, name, accessType);
-
-    const fn = descriptor.value;
-    descriptor.value = async function(...args) {
-      const canAccess = await checkAccess();
-      if (!canAccess) {
-        throw new Forbidden();
-      }
-
-      return fn(...args);
-    };
-
-    return descriptor;
   };
+}
+
+export function wrap(target, name, descriptor) {
+  const accessType = getAccessForMethod(target, name);
+  if (!accessType) {
+    return;
+  }
+
+  descriptor.value = _.wrap(descriptor.value, async function(fn, ...args) {
+    const canAccess = await checkAccess(target, name, accessType);
+    if (!canAccess) {
+      throw new Forbidden();
+    }
+
+    return await fn.call(this, ...args);
+  });
+
+  return descriptor;
 }
 
 

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import cls from 'continuation-local-storage';
 import {getTableForModel} from '../lib/routing-table';
+import {wrap as access} from './access';
 
 export default function method(options) {
   options = options || {};
@@ -55,10 +56,14 @@ function decorateMethod(obj, name, target) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, name);
   const value = descriptor.value;
   if (typeof value === 'function' && (!target[name] || obj[name] === target[name])) {
+    // Reminder: wrappers are executed bottom to top.
     descriptor.value = _.wrap(value, function(fn, ...args) {
       const ctx = cls.getNamespace('ctx');
       return fn.call(this, ...args, (typeof ctx === 'function' ? ctx() : ctx));
     });
+
+    access(target, name, descriptor);
+
     Object.defineProperty(target, name, descriptor);
   }
 }

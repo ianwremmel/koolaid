@@ -44,19 +44,19 @@ export default class NaiveModel extends RestModel {
 
   static find(filter, ctx) {
     if (!filter) {
-      return Promise.resolve(_(models)
+      return _(models)
         .values()
         .filter()
-        .value());
+        .value();
     }
 
-    return Promise.resolve(_(models)
+    return _(models)
       // Aparently, _.where doesn't work correctly on Objects
       .values()
       .where(filter.where)
       .map((data) => new (ctx.get('Model'))(data))
       .filter()
-      .value());
+      .value();
   }
 
   static async findById(id, ctx) {
