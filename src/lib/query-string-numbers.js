@@ -38,4 +38,4 @@ export default function queryStringNumbers() {
   function isNumber(val) {
     return !Array.isArray(val) && (val - parseFloat(val) + 1) >= 0;
   }
-};
+}

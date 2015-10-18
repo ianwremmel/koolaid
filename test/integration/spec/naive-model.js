@@ -47,7 +47,8 @@ describe('Models', () => {
     // PUT /
     describe('.upsert()', () => {
       let id;
-      before(() => {
+      beforeEach(() => {
+        id = uuid.v4();
         return request(app)
           .post('/naive-model')
           .send({
@@ -65,9 +66,9 @@ describe('Models', () => {
           .expect(201);
       });
 
-      it.skip('updates an existing model', () => {
+      it('updates an existing model', () => {
         return request(app)
-          .post('/naive-model')
+          .put('/naive-model')
           .send({
             id
           })

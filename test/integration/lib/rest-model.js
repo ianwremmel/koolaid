@@ -7,6 +7,10 @@ export default class RestModel {
     Object.assign(this, attrs);
   }
 
+  isNew() {
+    throw new Error('not implemented');
+  }
+
   @method({verb: 'POST', path: '/'})
   @access('write')
   @param({source: 'body'})

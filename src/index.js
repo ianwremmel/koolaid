@@ -67,7 +67,7 @@ export default function fullKoolaid(options) {
               res.status(204);
             }
             else if (result instanceof target) {
-              if (req.model !== result) {
+              if (result.isNew()) {
                 res.status(201);
               }
               else {

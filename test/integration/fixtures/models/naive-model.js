@@ -8,6 +8,10 @@ let models = {};
 
 @resource({basePath: 'naive-model'})
 export default class NaiveModel extends RestModel {
+  isNew(ctx) {
+    return ctx.get('isNew');
+  }
+
   static create(data, ctx) {
     if (models[data.id]) {
       throw new Conflict(`A NaiveModel with id ${data.id} already exists.`);
@@ -18,6 +22,7 @@ export default class NaiveModel extends RestModel {
     }
 
     models[data.id] = data;
+    ctx.set('isNew', true);
     return new (ctx.get('Model'))(data);
   }
 
@@ -68,18 +73,25 @@ export default class NaiveModel extends RestModel {
       });
   }
 
-  static upsert(data, ctx) {
+  static async upsert(data, ctx) {
     if (!data.id) {
       throw new BadRequest('Cannot upsert without id field');
     }
 
-    const model = models[data.id];
-    if (model) {
+    try {
+      const model = await (ctx.get('Model')).findById(data.id);
       Object.assign(model, data);
       return model;
     }
+    catch (e) {
+      if (e instanceof NotFound) {
+        ctx.set('isNew', true);
+        return (ctx.get('Model')).create(data);
+      }
 
-    return (ctx.get('Model')).create(data);
+      throw e;
+    }
+
   }
 
   // Note: this implementation is really rest-only; it won't work if called
