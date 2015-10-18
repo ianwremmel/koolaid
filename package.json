@@ -5,10 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha --compilers js:babel/register test/*/spec/**",
-    "post-test": "eslint src/** test/** Gruntfile.js",
+    "posttest": "eslint src/** test/** Gruntfile.js",
     "watch": "nodemon -w src -w test -x npm test"
   },
-  "author": "Ian W. Remmel <design@ianwremmel.com",
+  "author": "Ian W. Remmel <design@ianwremmel.com>",
   "license": "(Apache-2.0)",
   "devDependencies": {
     "babel-eslint": "^4.1.3",
