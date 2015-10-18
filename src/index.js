@@ -7,7 +7,6 @@ import {middleware as httpErrorHandler} from './lib/http-error';
 import method from './decorators/method';
 import param from './decorators/param';
 import queryStringNumbers from './lib/query-string-numbers';
-import relation from './decorators/relation';
 import requireDir from 'require-dir';
 import resource from './decorators/resource';
 
@@ -113,6 +112,5 @@ Object.assign(fullKoolaid, {
   access,
   method,
   param,
-  relation,
   resource
 });
