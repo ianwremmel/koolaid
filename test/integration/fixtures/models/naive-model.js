@@ -59,18 +59,16 @@ export default class NaiveModel extends RestModel {
       .value());
   }
 
-  static findById(id, ctx) {
+  static async findById(id, ctx) {
     if (!id) {
       throw new BadRequest('`id` is required');
     }
 
-    return (ctx.get('Model')).find({where: {id}})
-      .then((models) => {
-        if (models.length === 0) {
-          throw new NotFound();
-        }
-        return models[0];
-      });
+    const models = await (ctx.get('Model')).find({where: {id}});
+    if (models.length === 0) {
+      throw new NotFound();
+    }
+    return models[0];
   }
 
   static async upsert(data, ctx) {
@@ -100,14 +98,12 @@ export default class NaiveModel extends RestModel {
     return null;
   }
 
-  static update(body, filter, ctx) {
-    return (ctx.get('Model')).find(filter)
-      .then((m) => {
-        models = m.reduce((models, model) => {
-          models[model.id] = Object.assign(model, body);
-          return models;
-        }, models);
-      });
+  static async update(body, filter, ctx) {
+    const localModels = await (ctx.get('Model')).find(filter);
+    models = localModels.reduce((models, model) => {
+      models[model.id] = Object.assign(model, body);
+      return models;
+    }, models);
   }
 
   find() {

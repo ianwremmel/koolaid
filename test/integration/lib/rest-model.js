@@ -47,13 +47,11 @@ export default class RestModel {
   @method({verb: 'GET', path: '/count'})
   @access('read')
   @param({source: 'query', name: 'filter'})
-  static count(filter, ctx) {
-    return ctx.get('Model').find(filter)
-      .then((models) => {
-        return {
-          count: models.length
-        };
-      });
+  static async count(filter, ctx) {
+    const models = await ctx.get('Model').find(filter);
+    return {
+      count: models.length
+    };
   }
 
   @method({verb: 'HEAD', path: '/:id'})

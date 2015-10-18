@@ -10,12 +10,10 @@ function defaultAccessCallback() {
 
 let accessCallback = defaultAccessCallback;
 
-function checkAccess(...args) {
+async function checkAccess(...args) {
   // TODO ...args needs to contain target, accessType, userId, and objectId (if
   // not static)
-  return new Promise((resolve) => {
-    resolve(accessCallback(...args));
-  });
+  return await accessCallback(...args);
 }
 
 export default function access(accessType) {
@@ -27,15 +25,13 @@ export default function access(accessType) {
     setAccessForMethod(target, name, accessType);
 
     const fn = descriptor.value;
-    descriptor.value = function(...args) {
-      return checkAccess()
-        .then((canAccess) => {
-          if (!canAccess) {
-            throw new Forbidden();
-          }
+    descriptor.value = async function(...args) {
+      const canAccess = await checkAccess();
+      if (!canAccess) {
+        throw new Forbidden();
+      }
 
-          return fn(...args);
-        });
+      return fn(...args);
     };
 
     return descriptor;
