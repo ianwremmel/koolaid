@@ -1,3 +1,3 @@
 export default function isStatic(target) {
-  return !!target.prototype;
+  return Boolean(target.prototype);
 }
