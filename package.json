@@ -4,8 +4,11 @@
   "description": "RESTfu modeling framework for express that drank all the es6+ koolaid",
   "main": "src/index.js",
   "scripts": {
+    "predoc":  "rm -rf documentation",
+    "doc": "documentation -o doc -f html",
+    "lint": "eslint src/** test/** Gruntfile.js",
     "test": "mocha --compilers js:babel/register test/*/spec/**",
-    "posttest": "eslint src/** test/** Gruntfile.js",
+    "posttest": "npm run lint && npm run doc",
     "watch": "nodemon -w src -w test -x npm test"
   },
   "author": "Ian W. Remmel <design@ianwremmel.com>",
@@ -15,6 +18,7 @@
     "body-parser": "~1.14.1",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
+    "documentation": "^3.0.3",
     "errorhandler": "^1.4.2",
     "eslint": "^1.6.0",
     "eslint-plugin-mocha": "^1.0.0",

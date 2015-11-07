@@ -71,6 +71,14 @@
       "markers": ["*!"]
     }],
     "space-infix-ops": [0],
+    "valid-jsdoc": [2, {
+      "prefer": {
+        "returns": "return"
+      },
+      "requireParamDescription": true,
+      "requireReturn": true,
+      "requireReturnDescription": true
+    }],
     "wrap-iife": [2]
   }
 }

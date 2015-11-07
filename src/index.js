@@ -10,6 +10,17 @@ import queryStringNumbers from './lib/query-string-numbers';
 import requireDir from 'require-dir';
 import resource from './decorators/resource';
 
+/**
+ * Main entry point
+ * @param  {Object} options Options object
+ * @param  {string} options.models (required) path directory of model
+ * definitions
+ * @param  {Function} options.context if defined, will be called at the start of
+ * each request to inject extra context information
+ * @param  {Object} options.idParam name of the route parameter to use as a
+ * model's id
+ * @return {express.Router} Router that will handle all koolaid requests.
+ */
 export default function fullKoolaid(options) {
   if (!options.models) {
     throw new Error('`options.models` is required');
@@ -17,6 +28,7 @@ export default function fullKoolaid(options) {
 
   const context = options.context;
   const models = requireDir(options.models);
+  // TODO should idParam be a modle-specific value?
   const idParam = options.idParam || 'id';
 
   const router = express.Router();
