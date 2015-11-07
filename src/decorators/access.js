@@ -19,7 +19,7 @@ async function checkAccess(...args) {
 
 export default function access(accessType) {
   if (!accessType) {
-    throw new Error('`accessType` is required');
+    throw new Error(`\`accessType\` is required`);
   }
 
   return function(target, name) {
@@ -39,7 +39,7 @@ export function wrap(target, name, descriptor) {
       throw new Forbidden();
     }
 
-    return await fn.call(this, ...args);
+    return await Reflect.apply(fn, this, args);
   });
 
   return descriptor;
@@ -71,6 +71,6 @@ export function getAccessForMethod(target, name) {
         }
       }
     }
-    t = Object.getPrototypeOf(t);
+    t = Reflect.getPrototypeOf(t);
   }
 }

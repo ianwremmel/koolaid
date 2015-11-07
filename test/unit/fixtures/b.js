@@ -1,9 +1,9 @@
 import {access, method, resource} from '../.././..';
 
-@resource({basePath: 'b'})
+@resource({basePath: `b`})
 export default class B {
-  @access('read')
-  @method({verb: 'GET', path: '/:id'})
+  @access(`read`)
+  @method({verb: `GET`, path: `/:id`})
   find(ctx) {
 
   }

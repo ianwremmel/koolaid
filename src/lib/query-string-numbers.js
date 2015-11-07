@@ -17,14 +17,10 @@ export default function queryStringNumbers() {
 
     refs.push(obj);
 
-    for (const p in obj) {
-      if (!Object.prototype.hasOwnProperty.call(obj, p)) {
-        continue;
-      }
-
+    for (const p of Object.getOwnPropertyNames(obj)) {
       const val = obj[p];
 
-      if (typeof val === 'object') {
+      if (typeof val === `object`) {
         parseNumbers(val, refs);
         continue;
       }

@@ -7,15 +7,15 @@ export default function method(options) {
   options = options || {};
 
   if (!options.source) {
-    throw new Error('`options.source` is required');
+    throw new Error(`\`options.source\` is required`);
   }
 
   return function(target, name) {
     const method = getCurrentMethod(target, name);
-    let params = method.get('params');
+    let params = method.get(`params`);
     if (!params) {
       params = [];
-      method.set('params', params);
+      method.set(`params`, params);
     }
     params.unshift(options);
   };
@@ -27,10 +27,10 @@ export function wrap(target, name, descriptor) {
     if (method) {
       const params = method[isStatic(target, name)][0].params;
       if (params && args.length !== params.length) {
-        throw new BadRequest('One or more required parameters are missing');
+        throw new BadRequest(`One or more required parameters are missing`);
       }
     }
 
-    return fn.call(this, ...args);
+    return Reflect.apply(fn, this, args);
   });
 }

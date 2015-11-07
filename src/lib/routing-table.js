@@ -13,7 +13,7 @@ export function getRoutingTable(target) {
     const table = getTableForModel(key);
     tables.basePath = tables.basePath || table.basePath;
     merge(tables.methods, table);
-    key = Object.getPrototypeOf(key);
+    key = Reflect.getPrototypeOf(key);
   }
 
   return tables;
@@ -22,17 +22,17 @@ export function getRoutingTable(target) {
     source.forEach((value, methodName) => {
       dest[methodName] = dest[methodName] || {};
       value.forEach((value, isStatic) => {
-        if (value.has('methods')) {
+        if (value.has(`methods`)) {
           const routes = dest[methodName][isStatic] = dest[methodName][isStatic] || [];
-          value.get('methods').forEach((method) => {
+          value.get(`methods`).forEach((method) => {
             const route = {
               accessType: getAccessForMethod(target, methodName),
-              path: method.get('path'),
-              verb: method.get('verb')
+              path: method.get(`path`),
+              verb: method.get(`verb`)
             };
 
-            if (method.has('params')) {
-              route.params = method.get('params');
+            if (method.has(`params`)) {
+              route.params = method.get(`params`);
             }
             routes.push(route);
           });
@@ -48,9 +48,9 @@ export function getFlatRoutingTable(target) {
   const basePath = routingTable.basePath;
   Object.keys(routingTable.methods).forEach((methodName) => {
     Object.keys(routingTable.methods[methodName]).forEach((isStatic) => {
-      isStatic = isStatic === 'true';
+      isStatic = isStatic === `true`;
       table.push(Object.assign({}, routingTable.methods[methodName][isStatic][0], {
-        path: path.join('/', basePath, routingTable.methods[methodName][isStatic][0].path),
+        path: path.join(`/`, basePath, routingTable.methods[methodName][isStatic][0].path),
         methodName,
         isStatic
       }));
@@ -80,10 +80,10 @@ export function finishCurrentMethod(target, name) {
   const table = getTableForMethod(target, name);
   const current = getCurrentMethod(target, name);
   currentMethods.delete(table);
-  let methods = table.get('methods');
+  let methods = table.get(`methods`);
   if (!methods) {
     methods = [];
-    table.set('methods', methods);
+    table.set(`methods`, methods);
   }
   methods.push(current);
 }

@@ -6,10 +6,10 @@ import uuid from 'uuid';
 
 let models = {};
 
-@resource({basePath: 'naive-model'})
+@resource({basePath: `naive-model`})
 export default class NaiveModel extends RestModel {
   isNew(ctx) {
-    return ctx.get('isNew');
+    return ctx.get(`isNew`);
   }
 
   static create(data, ctx) {
@@ -22,8 +22,8 @@ export default class NaiveModel extends RestModel {
     }
 
     models[data.id] = data;
-    ctx.set('isNew', true);
-    return new (ctx.get('Model'))(data);
+    ctx.set(`isNew`, true);
+    return new (ctx.get(`Model`))(data);
   }
 
   static destroy(filter) {
@@ -31,9 +31,9 @@ export default class NaiveModel extends RestModel {
       _(models)
         .values()
         .remove(filter.where)
-        .pluck('id')
+        .pluck(`id`)
         .reduce((models, id) => {
-          delete models[id];
+          Reflect.deleteProperty(models, id);
           return models;
         }, models);
     }
@@ -51,20 +51,20 @@ export default class NaiveModel extends RestModel {
     }
 
     return _(models)
-      // Aparently, _.where doesn't work correctly on Objects
+      // Aparently, _.where doesn`t work correctly on Objects
       .values()
       .where(filter.where)
-      .map((data) => new (ctx.get('Model'))(data))
+      .map((data) => new (ctx.get(`Model`))(data))
       .filter()
       .value();
   }
 
   static async findById(id, ctx) {
     if (!id) {
-      throw new BadRequest('`id` is required');
+      throw new BadRequest(`\`id\` is required`);
     }
 
-    const models = await (ctx.get('Model')).find({where: {id}});
+    const models = await (ctx.get(`Model`)).find({where: {id}});
     if (models.length === 0) {
       throw new NotFound();
     }
@@ -73,18 +73,18 @@ export default class NaiveModel extends RestModel {
 
   static async upsert(data, ctx) {
     if (!data.id) {
-      throw new BadRequest('Cannot upsert without id field');
+      throw new BadRequest(`Cannot upsert without id field`);
     }
 
     try {
-      const model = await (ctx.get('Model')).findById(data.id);
+      const model = await (ctx.get(`Model`)).findById(data.id);
       Object.assign(model, data);
       return model;
     }
     catch (e) {
       if (e instanceof NotFound) {
-        ctx.set('isNew', true);
-        return (ctx.get('Model')).create(data);
+        ctx.set(`isNew`, true);
+        return (ctx.get(`Model`)).create(data);
       }
 
       throw e;
@@ -92,14 +92,14 @@ export default class NaiveModel extends RestModel {
 
   }
 
-  // Note: this implementation is really rest-only; it won't work if called
+  // Note: this implementation is really rest-only; it won`t work if called
   // via NaiveModel.exists(id).
   static exists() {
     return null;
   }
 
   static async update(body, filter, ctx) {
-    const localModels = await (ctx.get('Model')).find(filter);
+    const localModels = await (ctx.get(`Model`)).find(filter);
     models = localModels.reduce((models, model) => {
       models[model.id] = Object.assign(model, body);
       return models;
@@ -111,18 +111,18 @@ export default class NaiveModel extends RestModel {
   }
 
   destroy(ctx) {
-    (ctx.get('Model')).destroy({filter: {where: {id: this.id}}});
+    (ctx.get(`Model`)).destroy({filter: {where: {id: this.id}}});
     return null;
   }
 
   update(body) {
     if (body.id !== this.id) {
-      throw new BadRequest('Cannot change model id');
+      throw new BadRequest(`Cannot change model id`);
     }
 
     Object.assign(this, body);
 
-    Object.assign(_(models[this.id]).pick('id', 'extraData'), body);
+    Object.assign(_(models[this.id]).pick(`id`, `extraData`), body);
     return this;
   }
 }

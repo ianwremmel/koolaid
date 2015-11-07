@@ -23,17 +23,17 @@ import resource from './decorators/resource';
  */
 export default function fullKoolaid(options) {
   if (!options.models) {
-    throw new Error('`options.models` is required');
+    throw new Error(`\`options.models\` is required`);
   }
 
   const context = options.context;
   const models = requireDir(options.models);
   // TODO should idParam be a modle-specific value?
-  const idParam = options.idParam || 'id';
+  const idParam = options.idParam || `id`;
 
   const router = express.Router();
 
-  const ctx = cls.createNamespace('ctx');
+  const ctx = cls.createNamespace(`ctx`);
 
   Object.keys(models).reduce((router, modelName) => {
     const model = models[modelName];
@@ -47,7 +47,7 @@ export default function fullKoolaid(options) {
 
   function mount(target) {
     let router;
-    router = _(getFlatRoutingTable(target)).sortBy('isStatic').reverse().values().reduce((router, row) => {
+    router = _(getFlatRoutingTable(target)).sortBy(`isStatic`).reverse().values().reduce((router, row) => {
       const {
         params,
         path,
@@ -57,8 +57,8 @@ export default function fullKoolaid(options) {
       router[verb](path, (req, res, next) => {
         ctx.run(() => {
           new Promise((resolve) => {
-            ctx.set('Model', target);
-            ctx.set('user', req.user);
+            ctx.set(`Model`, target);
+            ctx.set(`user`, req.user);
             if (_.isFunction(context)) {
               context(ctx, req);
             }
@@ -101,8 +101,8 @@ export default function fullKoolaid(options) {
 
     router.param(idParam, (req, res, next, id) => {
       ctx.run(() => {
-        ctx.set('Model', target);
-        ctx.set('user', req.user);
+        ctx.set(`Model`, target);
+        ctx.set(`user`, req.user);
         if (_.isFunction(context)) {
           context(ctx, req);
         }
@@ -119,7 +119,7 @@ export default function fullKoolaid(options) {
   }
 }
 
-// Apparently, `import a from 'a'; export a;` doesn't work.
+// Apparently, `import a from 'a'; export a;` doesn`t work.
 Object.assign(fullKoolaid, {
   access,
   method,

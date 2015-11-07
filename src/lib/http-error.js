@@ -1,7 +1,7 @@
 import extendError from 'extend-error';
 
 const HttpError = extendError({
-  subTypeName: 'HttpError'
+  subTypeName: `HttpError`
 });
 
 export function middleware() {
@@ -20,168 +20,168 @@ export function middleware() {
 }
 
 const BadRequest = extendError(HttpError, {
-  subTypeName: 'BadRequest',
+  subTypeName: `BadRequest`,
   properties: {
     code: 400
   }
 });
 
 const Unauthorized = extendError(BadRequest, {
-  subTypeName: 'Unauthorized',
+  subTypeName: `Unauthorized`,
   properties: {
     code: 401
   }
 });
 
 const PaymentRequired = extendError(BadRequest, {
-  subTypeName: 'PaymentRequired',
+  subTypeName: `PaymentRequired`,
   properties: {
     code: 402
   }
 });
 
 const Forbidden = extendError(BadRequest, {
-  subTypeName: 'Forbidden',
+  subTypeName: `Forbidden`,
   properties: {
     code: 403
   }
 });
 
 const NotFound = extendError(BadRequest, {
-  subTypeName: 'NotFound',
+  subTypeName: `NotFound`,
   properties: {
     code: 404
   }
 });
 
 const MethodNotAllowed = extendError(BadRequest, {
-  subTypeName: 'MethodNotAllowed',
+  subTypeName: `MethodNotAllowed`,
   properties: {
     code: 405
   }
 });
 
 const NotAcceptable = extendError(BadRequest, {
-  subTypeName: 'NotAcceptable',
+  subTypeName: `NotAcceptable`,
   properties: {
     code: 406
   }
 });
 
 const ProxyAuthenticationRequired = extendError(BadRequest, {
-  subTypeName: 'ProxyAuthenticationRequired',
+  subTypeName: `ProxyAuthenticationRequired`,
   properties: {
     code: 407
   }
 });
 
 const RequestTimeout = extendError(BadRequest, {
-  subTypeName: 'RequestTimeout',
+  subTypeName: `RequestTimeout`,
   properties: {
     code: 408
   }
 });
 
 const Conflict = extendError(BadRequest, {
-  subTypeName: 'Conflict',
+  subTypeName: `Conflict`,
   properties: {
     code: 409
   }
 });
 
 const Gone = extendError(BadRequest, {
-  subTypeName: 'Gone',
+  subTypeName: `Gone`,
   properties: {
     code: 410
   }
 });
 
 const LengthRequired = extendError(BadRequest, {
-  subTypeName: 'LengthRequired',
+  subTypeName: `LengthRequired`,
   properties: {
     code: 411
   }
 });
 
 const PreconditionFailed = extendError(BadRequest, {
-  subTypeName: 'PreconditionFailed',
+  subTypeName: `PreconditionFailed`,
   properties: {
     code: 412
   }
 });
 
 const RequestEntityTooLarge = extendError(BadRequest, {
-  subTypeName: 'RequestEntityTooLarge',
+  subTypeName: `RequestEntityTooLarge`,
   properties: {
     code: 413
   }
 });
 
 const RequestUriTooLong = extendError(BadRequest, {
-  subTypeName: 'RequestUriTooLong',
+  subTypeName: `RequestUriTooLong`,
   properties: {
     code: 414
   }
 });
 
 const UnsupportedMediaType = extendError(BadRequest, {
-  subTypeName: 'UnsupportedMediaType',
+  subTypeName: `UnsupportedMediaType`,
   properties: {
     code: 415
   }
 });
 
 const RequestRangeNotSatisfiable = extendError(BadRequest, {
-  subTypeName: 'RequestRangeNotSatisfiable',
+  subTypeName: `RequestRangeNotSatisfiable`,
   properties: {
     code: 416
   }
 });
 
 const ExpectationFailed = extendError(BadRequest, {
-  subTypeName: 'ExpectationFailed',
+  subTypeName: `ExpectationFailed`,
   properties: {
     code: 417
   }
 });
 
 const InternalServerError = extendError(HttpError, {
-  subTypeName: 'InternalServerError',
+  subTypeName: `InternalServerError`,
   properties: {
     code: 500
   }
 });
 
 const NotImplemented = extendError(InternalServerError, {
-  subTypeName: 'NotImplemented',
+  subTypeName: `NotImplemented`,
   properties: {
     code: 501
   }
 });
 
 const BadGateway = extendError(InternalServerError, {
-  subTypeName: 'BadGateway',
+  subTypeName: `BadGateway`,
   properties: {
     code: 502
   }
 });
 
 const ServiceUnavailable = extendError(InternalServerError, {
-  subTypeName: 'ServiceUnavailable',
+  subTypeName: `ServiceUnavailable`,
   properties: {
     code: 503
   }
 });
 
 const GatewayTimeout = extendError(InternalServerError, {
-  subTypeName: 'GatewayTimeout',
+  subTypeName: `GatewayTimeout`,
   properties: {
     code: 504
   }
 });
 
 const HttpVersionNotSupported = extendError(InternalServerError, {
-  subTypeName: 'HttpVersionNotSupported',
+  subTypeName: `HttpVersionNotSupported`,
   properties: {
     code: 505
   }
