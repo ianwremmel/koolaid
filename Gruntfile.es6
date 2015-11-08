@@ -120,7 +120,7 @@ export default function gruntConfig(grunt) {
         `.eslintrc`
       ],
       tasks: [
-        `test`
+        `mochaTest`
       ]
     }
   });
