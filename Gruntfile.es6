@@ -50,7 +50,7 @@ export default function gruntConfig(grunt) {
 
     coveralls: {
       coverage: {
-        src: `<%= reports %>/coverage/all/lcov-info`
+        src: `<%= config.reports %>/coverage/all/lcov.info`
       }
     },
 

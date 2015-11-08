@@ -11,12 +11,13 @@
 *.tgz
 *.xml
 .DS_Store
+.env
 .idea
 .project
 .strong-pm
+.tmp
 coverage
+doc
 node_modules
 npm-debug.log
-.env
-doc
-.tmp
+reports
