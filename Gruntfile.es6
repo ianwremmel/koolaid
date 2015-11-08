@@ -109,19 +109,20 @@ export default function gruntConfig(grunt) {
     },
 
     watch: {
-      options: {
-        atBegin: true
-      },
-      files: [
-        `node_modules/**/*.js`,
-        `<%= config.src %>/**/*.{js,eslintrc}`,
-        `<%= config.test %>/**/*.{js,eslintrc}`,
-        `Gruntfile`,
-        `.eslintrc`
-      ],
-      tasks: [
-        `mochaTest`
-      ]
+      test: {
+        options: {
+          atBegin: true
+        },
+        files: [
+          `node_modules/**/*.js`,
+          `<%= config.src %>/**/*.{js,eslintrc}`,
+          `<%= config.test %>/**/*.{js,eslintrc}`,
+          `Gruntfile.*`
+        ],
+        tasks: [
+          `mochaTest`
+        ]
+      }
     }
   });
 
