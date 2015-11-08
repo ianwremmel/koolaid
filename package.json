@@ -4,12 +4,7 @@
   "description": "RESTful modeling framework for express that drank all the es6+ koolaid",
   "main": "src/index.js",
   "scripts": {
-    "predoc":  "rm -rf documentation",
-    "doc": "documentation -o doc -f html",
-    "lint": "eslint src/** test/** Gruntfile.js",
-    "test": "mocha --compilers js:babel/register test/*/spec/**",
-    "posttest": "npm run lint && npm run doc",
-    "watch": "nodemon -w .eslintrc -w src -w test -x npm test"
+    "test": "grunt test"
   },
   "author": "Ian W. Remmel <design@ianwremmel.com>",
   "license": "(Apache-2.0)",
@@ -23,11 +18,22 @@
     "eslint": "^1.6.0",
     "eslint-plugin-mocha": "^1.0.0",
     "express": "^4.13.3",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-eslint": "^17.3.1",
+    "grunt-istanbul": "^0.6.1",
+    "grunt-mocha-test": "^0.12.7",
+    "grunt-shell": "^1.1.2",
+    "isparta": "^3.5.3",
+    "load-grunt-tasks": "^3.3.0",
     "mocha": "^2.3.3",
     "morgan": "^1.6.1",
     "nodemon": "^1.8.1",
     "sinon": "^1.17.1",
     "supertest": "^1.1.0",
+    "time-grunt": "^1.2.2",
     "uuid": "^2.0.1"
   },
   "dependencies": {
