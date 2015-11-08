@@ -45,6 +45,7 @@
       "before": true,
       "after": false
     }],
+    "global-require": [2],
     "guard-for-in": [2],
     "handle-callback-err": [2],
     "init-declarations": [0],
@@ -107,12 +108,14 @@
     "no-lone-blocks": [2],
     "no-loop-func": [2],
     "no-magic-numbers": [0],
+    "no-mixed-requires": [2],
     "no-multi-spaces": [2],
     "no-multi-str": [2],
     "no-native-reassign": [2],
     "no-negated-in-lhs": [2],
     "no-nested-ternary": [2],
     "no-new-func": [2],
+    "no-new-require": [2],
     "no-new-wrappers": [2],
     "no-new": [2],
     "no-obj-calls": [2],
@@ -121,7 +124,9 @@
     "no-param-reassign": [1, {
       "props": true
     }],
+    "no-path-concat": [2],
     "no-process-env": [0],
+    "no-process-exit": [2],
     "no-proto": [2],
     "no-redeclare": [2, {
       "builtinGlobals": true
@@ -134,6 +139,7 @@
     "no-shadow": [1],
     "no-shadow-restricted-names": [2],
     "no-sparse-arrays": [2],
+    "no-sync": [2],
     "no-this-before-super": [2],
     "no-throw-literal": [2],
     "no-undef-init": [2],
