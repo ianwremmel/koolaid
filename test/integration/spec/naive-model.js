@@ -68,9 +68,7 @@ describe(`Models`, () => {
 
     // POST /update
     describe(`.update()`, () => {
-      let id1;
-      let id2;
-      let id3;
+      let id1, id2, id3;
       beforeEach(() => {
         id1 = uuid.v4();
         id2 = uuid.v4();
@@ -153,8 +151,7 @@ describe(`Models`, () => {
 
     // GET /{?filter}
     describe(`.find()`, () => {
-      let id1;
-      let id2;
+      let id1, id2;
       beforeEach(() => {
         id1 = uuid.v4();
         id2 = uuid.v4();
@@ -175,7 +172,7 @@ describe(`Models`, () => {
         }, {
           id: id2,
           extraData: 2
-      }]));
+        }]));
 
       it(`retrieves a filtered subset of models `, () => request(app)
         .get(`/naive-model?filter[where][extraData]=2`)

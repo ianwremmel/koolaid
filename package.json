@@ -9,7 +9,7 @@
     "lint": "eslint src/** test/** Gruntfile.js",
     "test": "mocha --compilers js:babel/register test/*/spec/**",
     "posttest": "npm run lint && npm run doc",
-    "watch": "nodemon -w src -w test -x npm test"
+    "watch": "nodemon -w .eslintrc -w src -w test -x npm test"
   },
   "author": "Ian W. Remmel <design@ianwremmel.com>",
   "license": "(Apache-2.0)",

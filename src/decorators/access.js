@@ -45,7 +45,6 @@ export function wrap(target, name, descriptor) {
   return descriptor;
 }
 
-
 function setAccessForMethod(target, name, accessType) {
   const accessTableForTarget = findOrCreateMap(accessTable, target);
   const accessTableForMethod = findOrCreateMap(accessTableForTarget, name);
