@@ -3,6 +3,12 @@ import loadGruntTasks from 'load-grunt-tasks';
 import pkg from './package';
 import timeGrunt from 'time-grunt';
 
+/**
+ * Grunt config
+ * @param {Object} grunt grunt object
+ * @private
+ * @returns {undefined}
+ */
 export default function gruntConfig(grunt) {
   loadGruntTasks(grunt);
   timeGrunt(grunt);
@@ -10,37 +16,62 @@ export default function gruntConfig(grunt) {
   grunt.initConfig({
     clean: {
       doc: {
-        src: `doc`
+        src: `<%= config.doc %>`
       },
       tmp: {
-        src: `.tmp`
+        src: `<%= config.tmp %>`
+      },
+      reports: {
+        src: `<%= config.reports %>`
+      }
+    },
+
+    config: {
+      doc: `doc`,
+      reports: `reports`,
+      src: `src`,
+      test: `test`,
+      tmp: `.tmp`
+    },
+
+    copy: {
+      coverage: {
+        files: [{
+          expand: true,
+          cwd: `.`,
+          src: `<%= config.test %>/**/*`,
+          dest: `<%= config.tmp %>`
+        }, {
+          src: `<%= config.test %>/index.js`,
+          dest: `<%= config.tmp %>/index.js`
+        }]
       }
     },
 
     eslint: {
       all: [
         `Gruntfile.js`,
-        `src/**/*.js`,
-        `test/**/*.js`
+        `<%= config.src %>/**/*.js`,
+        `<%= config.test %>/**/*.js`
       ]
     },
 
     instrument: {
-      files: `src/**/*.js`,
+      files: `<%= config.src %>/**/*.js`,
       options: {
-        basePath: `.tmp`,
+        basePath: `<%= config.tmp %>`,
         instrumenter: Instrumenter
       }
     },
 
     makeReport: {
-      src: `reports/coverage/*/coverage*.json`,
+      src: `<%= config.reports %>/coverage/*/coverage*.json`,
       options: {
         type: [
           `cobertura`,
           `lcov`
         ],
-        dir: `reports/coverage/all`,
+        dir: `<%= config.reports %>/coverage/all`,
         print: `summary`
       }
     },
@@ -50,10 +81,10 @@ export default function gruntConfig(grunt) {
         reporter: `spec`
       },
       integration: {
-        src: [`test/integration/spec/**/*.js`]
+        src: [`<%= config.test %>/integration/spec/**/*.js`]
       },
       unit: {
-        src: [`test/unit/spec/**/*.js`]
+        src: [`<%= config.test %>/unit/spec/**/*.js`]
       }
     },
 
@@ -61,13 +92,13 @@ export default function gruntConfig(grunt) {
 
     shell: {
       doc: {
-        command: `./node_modules/.bin/documentation -f html -o doc`
+        command: `./node_modules/.bin/documentation -f html -o <%= config.doc %>`
       }
     },
 
     storeCoverage: {
       options: {
-        dir: `reports/coverage/mocha`
+        dir: `<%= config.reports %>/coverage/mocha`
       }
     },
 
@@ -77,8 +108,8 @@ export default function gruntConfig(grunt) {
       },
       files: [
         `node_modules/**/*.js`,
-        `src/**/*.{js,eslintrc}`,
-        `test/**/*.{js,eslintrc}`,
+        `<%= config.src %>/**/*.{js,eslintrc}`,
+        `<%= config.test %>/**/*.{js,eslintrc}`,
         `Gruntfile`,
         `.eslintrc`
       ],
@@ -88,14 +119,52 @@ export default function gruntConfig(grunt) {
     }
   });
 
-  grunt.registerTask(`test`, [
-    `clean`,
-    `eslint`,
-    `mochaTest`
-  ]);
+  if (grunt.option(`coverage`)) {
+    configureCoverage();
+  }
 
-  grunt.register(`doc`, [
-    `clean:doc`
+  /**
+   * @private
+   * @returns {undefined}
+   */
+  function configureCoverage() {
+    const mochaTest = grunt.config(`mochaTest`);
+    if (mochaTest) {
+      Object.keys(mochaTest).forEach((key) => {
+        if (key === `options`) {
+          return;
+        }
+
+        mochaTest[key].src[0] = `${grunt.config(`config`).tmp}/${mochaTest[key].src[0]}`;
+      });
+
+      grunt.config(`mochaTest`, mochaTest);
+    }
+  }
+
+  grunt.registerTask(`test`, () => {
+    const tasks = [
+      `clean`,
+      `eslint`
+    ];
+
+    if (grunt.option(`coverage`)) {
+      tasks.push(`copy:coverage`);
+      tasks.push(`instrument`);
+    }
+
+    tasks.push(`mochaTest`);
+
+    if (grunt.option(`coverage`)) {
+      tasks.push(`storeCoverage`);
+      tasks.push(`makeReport`);
+    }
+
+    grunt.task.run(tasks);
+  });
+
+  grunt.registerTask(`doc`, [
+    `clean:doc`,
     `shell:doc`
   ]);
 }

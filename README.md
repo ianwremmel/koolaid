@@ -1,6 +1,7 @@
 # full-koolaid
 [![Build Status](https://travis-ci.org/ianwremmel/full-koolaid.svg)](https://travis-ci.org/ianwremmel/full-koolaid)
 [![Coverage Status](https://coveralls.io/repos/ianwremmel/full-koolaid/badge.svg?branch=master&service=github)](https://coveralls.io/github/ianwremmel/full-koolaid?branch=master)
+
 [![Dependency Status](https://david-dm.org/ianwremmel/full-koolaid.svg)](https://david-dm.org/ianwremmel/full-koolaid)
 [![devDependency Status](https://david-dm.org/ianwremmel/full-koolaid/dev-status.svg)](https://david-dm.org/ianwremmel/full-koolaid#info=devDependencies)
 [![peerDependency Status](https://david-dm.org/ianwremmel/full-koolaid/peer-status.svg)](https://david-dm.org/ianwremmel/full-koolaid#info=peerDependencies)

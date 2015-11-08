@@ -239,7 +239,7 @@
     "use-isnan": [2],
     "valid-jsdoc": [2, {
       "prefer": {
-        "returns": "return"
+        "return": "returns"
       },
       "requireParamDescription": true,
       "requireReturn": true,

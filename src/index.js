@@ -19,7 +19,7 @@ import resource from './decorators/resource';
  * each request to inject extra context information
  * @param  {Object} options.idParam name of the route parameter to use as a
  * model's id
- * @return {express.Router} Router that will handle all koolaid requests.
+ * @returns {express.Router} Router that will handle all koolaid requests.
  */
 export default function fullKoolaid(options) {
   if (!options.models) {
