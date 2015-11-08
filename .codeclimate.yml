@@ -1,5 +1,9 @@
-languages:
-   JavaScript: true
+engines:
+  eslint:
+    enabled: true
+ratings:
+   paths:
+     - src/**
+     - **.js
 exclude_paths:
-- "test/*"
-- "node_modules/*"
+- "node_modules/**/*"
