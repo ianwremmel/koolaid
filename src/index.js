@@ -119,7 +119,7 @@ export default function fullKoolaid(options) {
   }
 }
 
-// Apparently, `import a from 'a'; export a;` doesn`t work.
+// Apparently, `import a from 'a'; export a;` doesn't work.
 Object.assign(fullKoolaid, {
   access,
   method,
