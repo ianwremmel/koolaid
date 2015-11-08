@@ -7,6 +7,7 @@ export function findOrCreateMap(map, key) {
   return value;
 }
 
+
 export function findInMap(map, key) {
   const value = map.get(key);
   return value;
