@@ -4,7 +4,7 @@
   "description": "RESTful modeling framework for express that drank all the es6+ koolaid",
   "main": "src/index.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test --coverage=true"
   },
   "author": "Ian W. Remmel <design@ianwremmel.com>",
   "license": "(Apache-2.0)",
