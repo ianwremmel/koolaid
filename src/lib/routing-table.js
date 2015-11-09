@@ -45,24 +45,22 @@ export function getRoutingTable(target) {
 }
 
 export function flattenRoutingTable(routingTable) {
-  const table = [];
   const basePath = routingTable.basePath;
-  Object.keys(routingTable.methods).forEach((methodName) => {
-    Object.keys(routingTable.methods[methodName]).forEach((rowIsStatic) => {
-      rowIsStatic = rowIsStatic === `true`;
+  return Object.keys(routingTable.methods).reduce((table, methodName) => {
+    return Object.keys(routingTable.methods[methodName]).reduce((table, rowIsStatic) => {
+      return routingTable.methods[methodName][rowIsStatic].reduce((table, def) => {
 
-      routingTable.methods[methodName][rowIsStatic].forEach((def) => {
         const row = Object.assign({}, def, {
-          isStatic: rowIsStatic,
+          isStatic: rowIsStatic === `true`,
           methodName,
           path: path.join(`/`, basePath, def.path)
         });
         table.push(row);
-      });
-    });
-  });
+        return table;
 
-  return table;
+      }, table);
+    }, table);
+  }, []);
 }
 
 export function getFlatRoutingTable(target) {

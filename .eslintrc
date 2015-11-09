@@ -12,8 +12,7 @@
       - getWithoutSet: false
         setWithoutGet: true
     arrow-body-style:
-      - 2
-      - as-needed
+      - 0 # Seems like a good idea, but encouraged some surprisingly misleading code
     array-bracket-spacing:
       - 2
       - never
