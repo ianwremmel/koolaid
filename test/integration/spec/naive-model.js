@@ -246,7 +246,12 @@ describe(`Models`, () => {
           count: 2
         }));
 
-      it(`returns the number of existing models matching a given filter`);
+      it(`returns the number of existing models matching a given filter`, () => request(app)
+        .get(`/naive-model/count`)
+        .query({filter: {where: {extraData: 2}}})
+        .expect(200, {
+          count: 1
+        }));
     });
 
     // DELETE /:id
