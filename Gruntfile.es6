@@ -109,10 +109,21 @@ export default function gruntConfig(grunt) {
     },
 
     watch: {
-      test: {
-        options: {
-          atBegin: true
-        },
+      options: {
+        atBegin: true
+      },
+      refactor: {
+        files: [
+          `node_modules/**/*.js`,
+          `<%= config.src %>/**/*.{js,eslintrc}`,
+          `<%= config.test %>/**/*.{js,eslintrc}`,
+          `Gruntfile.*`
+        ],
+        tasks: [
+          `test`
+        ]
+      },
+      debug: {
         files: [
           `node_modules/**/*.js`,
           `<%= config.src %>/**/*.{js,eslintrc}`,
