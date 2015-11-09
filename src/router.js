@@ -184,8 +184,9 @@ export default function router(options) {
               }
             }
 
-            next(reason);
-          });
+            return Promise.reject(reason);
+          })
+          .catch(next);
       });
     });
 
