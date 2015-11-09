@@ -29,7 +29,7 @@ export default function fullKoolaid(options) {
 
   const context = options.context;
   const models = requireDir(options.models);
-  // TODO should idParam be a modle-specific value?
+  // TODO idParam should be a model-specific value
   const idParam = options.idParam || `id`;
 
   const router = express.Router();
@@ -53,92 +53,97 @@ export default function fullKoolaid(options) {
     // look like :id`s (e.g. /model/count needs to be mounted before /model/id).
     // Then, HEAD needs to come before GET because, aparently, express treats
     // GET as HEAD.
-    router = _(getFlatRoutingTable(target)).sortByOrder([`isStatic`, `verb`], [`asc`, `asc`]).reverse().values().reduce((router, row) => {
-      const {
-        isStatic,
-        methodName,
-        params,
-        path,
-        verb
-      } = row;
+    router = _(getFlatRoutingTable(target))
+      .sortByOrder([`isStatic`, `verb`], [`asc`, `asc`])
+      .reverse()
+      .values()
+      .reduce((router, row) => {
+        const {
+          isStatic,
+          methodName,
+          params,
+          path,
+          verb
+        } = row;
+        console.log(`${verb}\t${isStatic}\t${methodName}\t${path}`);
 
-      router[verb](path, (req, res, next) => {
-        assert.equal(verb, req.method.toLowerCase());
+        router[verb](path, (req, res, next) => {
+          assert.equal(verb, req.method.toLowerCase());
 
-        ctx.run(() => {
+          ctx.run(() => {
 
-          executeRequest()
-            .then(setResponseStatusCode)
-            .then(setResponseBody)
-            .catch(next);
+            executeRequest()
+              .then(setResponseStatusCode)
+              .then(setResponseBody)
+              .catch(next);
 
-          /**
-           * Executes the appropriate method for the identified RespoModel
-           * @returns {Promise} Resolves on completion
-           */
-          function executeRequest() {
-            return new Promise((resolve) => {
-              ctx.set(`Model`, target);
-              ctx.set(`user`, req.user);
-              ctx.set(`req`, req);
-              ctx.set(`res`, res);
+            /**
+             * Executes the appropriate method for the identified RespoModel
+             * @returns {Promise} Resolves on completion
+             */
+            function executeRequest() {
+              return new Promise((resolve) => {
+                ctx.set(`Model`, target);
+                ctx.set(`user`, req.user);
+                ctx.set(`req`, req);
+                ctx.set(`res`, res);
 
-              if (_.isFunction(context)) {
-                context(ctx, req);
-              }
+                if (_.isFunction(context)) {
+                  context(ctx, req);
+                }
 
-              let args = [];
-              if (params) {
-                args = params.reduce((rargs, rparam) => {
-                  const source = req[rparam.source];
-                  rargs.push(rparam.name ? _.get(source, rparam.name) : source);
-                  return rargs;
-                }, args);
-              }
+                let args = [];
+                if (params) {
+                  args = params.reduce((rargs, rparam) => {
+                    const source = req[rparam.source];
+                    rargs.push(rparam.name ? _.get(source, rparam.name) : source);
+                    return rargs;
+                  }, args);
+                }
 
-              resolve((isStatic ? target : req.model)[methodName](...args));
-            });
-          }
-
-          /**
-           * Determines the HTTP response code for `res`
-           * @param {Object} result the result of the request
-           * @returns {Object} returns `result`
-           */
-          function setResponseStatusCode(result) {
-            if (!result) {
-              res.status(204);
+                resolve((isStatic ? target : req.model)[methodName](...args));
+              });
             }
-            else if (result instanceof target) {
-              if (result.isNew()) {
-                res.status(201);
+
+            /**
+             * Determines the HTTP response code for `res`
+             * @param {Object} result the result of the request
+             * @returns {Object} returns `result`
+             */
+            function setResponseStatusCode(result) {
+              if (!result) {
+                res.status(204);
+              }
+              else if (result instanceof target) {
+                if (result.isNew()) {
+                  res.status(201);
+                }
+                else {
+                  res.status(200);
+                }
               }
               else {
                 res.status(200);
               }
+
+              return result;
             }
-            else {
-              res.status(200);
+
+            /**
+             * Sets the HTTP response body for `res`
+             * @param {Object} result the result of the request
+             * @returns {Object} returns `result`
+             */
+            function setResponseBody(result) {
+              res.json(result);
+
+              return result;
             }
-
-            return result;
-          }
-
-          /**
-           * Sets the HTTP response body for `res`
-           * @param {Object} result the result of the request
-           * @returns {Object} returns `result`
-           */
-          function setResponseBody(result) {
-            res.json(result);
-
-            return result;
-          }
+          });
         });
-      });
 
-      return router;
-    }, express.Router());
+        return router;
+      }, express.Router());
 
     router.param(idParam, (req, res, next, id) => {
       ctx.run(() => {
