@@ -46,7 +46,7 @@
     "require-dir": "^0.3.0"
   },
   "peerDependencies": {
-    "express": "4.x"
+    "express": ">= 4.5"
   },
   "babel": {
     "optional": [
