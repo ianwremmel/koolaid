@@ -1,6 +1,6 @@
 // inspired by qs-numbers
 export default function queryStringNumbers() {
-  return function(req, res, next) {
+  return function handler(req, res, next) {
     if (req.query) {
       parseNumbers(req.query);
     }
@@ -17,6 +17,9 @@ export default function queryStringNumbers() {
 
     refs.push(obj);
 
+    // Reflect.getOwnPropertyNames doesn't exist, so need to disable
+    // prefer-reflect here.
+    /* eslint prefer-reflect: [0] */
     for (const p of Object.getOwnPropertyNames(obj)) {
       const val = obj[p];
 

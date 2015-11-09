@@ -29,7 +29,7 @@ export default function fullKoolaid(options) {
 
   const context = options.context;
   const models = requireDir(options.models);
-  // TODO idParam should be a model-specific value
+
   const idParam = options.idParam || `id`;
 
   const router = express.Router();

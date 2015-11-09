@@ -12,8 +12,8 @@ function defaultAccessCallback() {
 let accessCallback = defaultAccessCallback;
 
 async function checkAccess(...args) {
-  // TODO ...args needs to contain target, accessType, userId, and objectId (if
-  // not static)
+  // ...args needs to contain target, accessType, userId, and objectId (if not
+  // static)
   return await accessCallback(...args);
 }
 
@@ -22,7 +22,7 @@ export default function access(accessType) {
     throw new Error(`\`accessType\` is required`);
   }
 
-  return function(target, name) {
+  return function _access(target, name) {
     setAccessForMethod(target, name, accessType);
   };
 }
@@ -33,7 +33,7 @@ export function wrap(target, name, descriptor) {
     return;
   }
 
-  descriptor.value = _.wrap(descriptor.value, async function(fn, ...args) {
+  descriptor.value = _.wrap(descriptor.value, async function wrapper(fn, ...args) {
     const canAccess = await checkAccess(target, name, accessType);
     if (!canAccess) {
       throw new Forbidden();

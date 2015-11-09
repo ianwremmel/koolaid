@@ -3,14 +3,14 @@ import {BadRequest} from '../lib/http-error';
 import {getCurrentMethod, getRoutingTable} from '../lib/routing-table';
 import isStatic from '../lib/is-static';
 
-export default function method(options) {
+export default function param(options) {
   options = options || {};
 
   if (!options.source) {
     throw new Error(`\`options.source\` is required`);
   }
 
-  return function(target, name) {
+  return function _param(target, name) {
     const method = getCurrentMethod(target, name);
     let params = method.get(`params`);
     if (!params) {
@@ -22,7 +22,7 @@ export default function method(options) {
 }
 
 export function wrap(target, name, descriptor) {
-  descriptor.value = _.wrap(descriptor.value, function(fn, ...args) {
+  descriptor.value = _.wrap(descriptor.value, function wrapper(fn, ...args) {
     const method = getRoutingTable(target).methods[name];
     if (method) {
       const params = method[isStatic(target, name)][0].params;

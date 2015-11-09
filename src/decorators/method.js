@@ -11,7 +11,7 @@ export default function method(options) {
     options.path = `/`;
   }
 
-  return function(target, name) {
+  return function _method(target, name) {
     const method = getCurrentMethod(target, name);
     method.set(`path`, options.path.toLowerCase());
     method.set(`verb`, options.verb.toLowerCase());

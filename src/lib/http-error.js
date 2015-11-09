@@ -5,7 +5,7 @@ const HttpError = extendError({
 });
 
 export function middleware() {
-  return function(err, req, res, next) {
+  return function handler(err, req, res, next) {
     if (!(err instanceof HttpError)) {
       return next(err);
     }

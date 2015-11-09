@@ -4,14 +4,14 @@ import {getTableForModel} from '../lib/routing-table';
 import {wrap as access} from './access';
 import {wrap as param} from './param';
 
-export default function method(options) {
+export default function resource(options) {
   options = options || {};
 
   if (!options.basePath) {
     throw new Error(`\`options.basePath\` is required`);
   }
 
-  return function(target) {
+  return function _resource(target) {
     const table = getTableForModel(target);
     table.basePath = options.basePath;
 
@@ -43,6 +43,9 @@ function contextualize(obj, target) {
 }
 
 function contextualizeObject(obj, target) {
+  // Reflect.getOwnPropertyNames doesn't exist, so need to disable
+  // prefer-reflect here.
+  /* eslint prefer-reflect: [0] */
   Object.getOwnPropertyNames(obj).forEach((name) => {
     if (!_.contains([`constructor`, `prototype`, `length`], name)) {
       contextualizeMethod(obj, name, target);
@@ -55,7 +58,7 @@ function contextualizeMethod(obj, name, target) {
   if (typeof descriptor.value === `function` && (!target[name] || obj[name] === target[name])) {
 
     // Reminder: wrappers are executed bottom to top.
-    descriptor.value = _.wrap(descriptor.value, function(fn, ...args) {
+    descriptor.value = _.wrap(descriptor.value, function wrapper(fn, ...args) {
       const ctx = cls.getNamespace(`ctx`);
       args.push(typeof ctx === `function` ? ctx() : ctx);
       return Reflect.apply(fn, this, args);
