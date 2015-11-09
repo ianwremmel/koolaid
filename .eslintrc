@@ -308,7 +308,7 @@
     no-undef:
       - 2
     no-undefined:
-      - 2
+      - 0
     no-underscore-dangle:
       - 0
     no-unexpected-multiline:
