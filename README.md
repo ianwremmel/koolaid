@@ -1,4 +1,4 @@
-# full-koolaid
+# koolaid
 [![Build Status](https://travis-ci.org/ianwremmel/full-koolaid.svg)](https://travis-ci.org/ianwremmel/full-koolaid)
 [![Coverage Status](https://coveralls.io/repos/ianwremmel/full-koolaid/badge.svg?branch=master&service=github)](https://coveralls.io/github/ianwremmel/full-koolaid?branch=master)
 [![Code Climate](https://codeclimate.com/github/ianwremmel/full-koolaid/badges/gpa.svg)](https://codeclimate.com/github/ianwremmel/full-koolaid)

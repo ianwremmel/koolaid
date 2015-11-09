@@ -6,7 +6,7 @@ import {assert} from 'chai';
 import {getAccessForMethod, setAccessCallback} from '../../../../src/decorators/access';
 import {Forbidden} from '../../../../src/lib/http-error';
 
-describe(`full-koolaid`, () => {
+describe(`koolaid`, () => {
   describe(`@access`, () => {
     it(`indicates access level`, () => {
       assert.equal(getAccessForMethod(A, `create`), `write`);

@@ -1,5 +1,5 @@
 {
-  "name": "full-koolaid",
+  "name": "@ianwremmel/koolaid",
   "version": "0.1.0",
   "description": "RESTful modeling framework for express that drank all the es6+ koolaid",
   "main": "src/index.js",

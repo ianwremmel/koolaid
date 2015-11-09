@@ -3,7 +3,7 @@ import {getRoutingTable, getFlatRoutingTable} from '../../../src/lib/routing-tab
 import A from '../fixtures/a';
 import AA from '../fixtures/aa';
 
-describe(`full-koolaid`, () => {
+describe(`koolaid`, () => {
   describe(`@resource`, () => {
 
     it(`produces the correct routing table for a resource`, () => {
