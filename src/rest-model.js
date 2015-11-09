@@ -1,7 +1,9 @@
 /* eslint no-unused-vars: [0] */
 import _ from 'lodash';
-import {NotFound} from '../../../src/lib/http-error';
-import {access, method, param} from '../../..';
+import {NotFound} from './lib/http-error';
+import access from './decorators/access';
+import method from './decorators/method';
+import param from './decorators/param';
 
 export default class RestModel {
   constructor(attrs) {

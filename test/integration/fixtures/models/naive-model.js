@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import {BadRequest, Conflict, NotFound} from '../../../../src/lib/http-error';
-import {resource} from '../../../..';
-import RestModel from '../../lib/rest-model';
+import {HttpError, resource, RestModel} from '../../../..';
 import uuid from 'uuid';
+
+const {BadRequest, Conflict, NotFound} = HttpError;
 
 let models = {};
 

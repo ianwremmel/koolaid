@@ -4,7 +4,7 @@ const HttpError = extendError({
   subTypeName: `HttpError`
 });
 
-export function middleware() {
+function middleware() {
   return function handler(err, req, res, next) {
     if (!(err instanceof HttpError)) {
       return next(err);
@@ -187,8 +187,9 @@ const HttpVersionNotSupported = extendError(InternalServerError, {
   }
 });
 
-export default HttpError;
-export {
+Object.assign(HttpError, {
+  middleware,
+
   BadRequest,
   Unauthorized,
   PaymentRequired,
@@ -213,4 +214,6 @@ export {
   ServiceUnavailable,
   GatewayTimeout,
   HttpVersionNotSupported
-};
+});
+
+export default HttpError;
