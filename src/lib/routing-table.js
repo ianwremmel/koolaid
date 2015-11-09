@@ -27,6 +27,7 @@ export function getRoutingTable(target) {
           value.get(`methods`).forEach((method) => {
             const route = {
               accessType: getAccessForMethod(target, methodName),
+              after: method.get(`after`),
               path: method.get(`path`),
               verb: method.get(`verb`)
             };
@@ -45,15 +46,20 @@ export function getRoutingTable(target) {
 export function getFlatRoutingTable(target) {
   const table = [];
   const routingTable = getRoutingTable(target);
+
   const basePath = routingTable.basePath;
   Object.keys(routingTable.methods).forEach((methodName) => {
-    Object.keys(routingTable.methods[methodName]).forEach((isStatic) => {
-      isStatic = isStatic === `true`;
-      table.push(Object.assign({}, routingTable.methods[methodName][isStatic][0], {
-        path: path.join(`/`, basePath, routingTable.methods[methodName][isStatic][0].path),
-        methodName,
-        isStatic
-      }));
+    Object.keys(routingTable.methods[methodName]).forEach((rowIsStatic) => {
+      rowIsStatic = rowIsStatic === `true`;
+
+      routingTable.methods[methodName][rowIsStatic].forEach((def) => {
+        const row = Object.assign({}, def, {
+          isStatic: rowIsStatic,
+          methodName,
+          path: path.join(`/`, basePath, def.path)
+        });
+        table.push(row);
+      });
     });
   });
   return table;
@@ -64,7 +70,7 @@ export function getTableForModel(target) {
   return findOrCreateMap(tables, isStatic(target) ? target : target.constructor);
 }
 
-function getTableForMethod(target, name) {
+export function getTableForMethod(target, name) {
   const table = getTableForModel(target);
   const methodTable = findOrCreateMap(table, name);
   return findOrCreateMap(methodTable, isStatic(target));

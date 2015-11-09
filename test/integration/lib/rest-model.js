@@ -63,13 +63,33 @@ export default class RestModel {
     throw new Error(`not implemented`);
   }
 
-  @method({verb: `HEAD`, path: `/:id`})
-  @access(`read`)
-  static exists(ctx) {
-    if (ctx.get(`model`)) {
+  @method({verb: `GET`, path: `/:id/exists`, after: (result, ctx) => {
+    return {
+      exists: result
+    }
+  }})
+  @method({verb: `HEAD`, path: `/:id`, after: (result, ctx) => {
+    if (result) {
       return null;
     }
     throw new NotFound();
+  }})
+  @access(`read`)
+  static async exists(id, ctx) {
+    if (!ctx) {
+      ctx = id;
+      id = undefined;
+    }
+
+    if (ctx.get(`model`)) {
+      return true;
+    }
+
+    if (id && await ctx.get(`Model`).find({where: {id}})) {
+      return true;
+    }
+
+    return false;
   }
 
   @method({verb: `DELETE`, path: `/:id`})

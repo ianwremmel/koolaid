@@ -4,7 +4,7 @@ import assert from 'assert';
 import cls from 'continuation-local-storage';
 import express from 'express';
 import {getFlatRoutingTable} from './lib/routing-table';
-import {middleware as httpErrorHandler} from './lib/http-error';
+import {middleware as httpErrorHandler, NotFound} from './lib/http-error';
 import method from './decorators/method';
 import param from './decorators/param';
 import queryStringNumbers from './lib/query-string-numbers';
@@ -59,13 +59,13 @@ export default function fullKoolaid(options) {
       .values()
       .reduce((router, row) => {
         const {
+          after,
           isStatic,
           methodName,
           params,
           path,
           verb
         } = row;
-        console.log(`${verb}\t${isStatic}\t${methodName}\t${path}`);
 
         router[verb](path, (req, res, next) => {
           assert.equal(verb, req.method.toLowerCase());
@@ -73,6 +73,7 @@ export default function fullKoolaid(options) {
           ctx.run(() => {
 
             executeRequest()
+              .then(postProcess)
               .then(setResponseStatusCode)
               .then(setResponseBody)
               .catch(next);
@@ -103,6 +104,18 @@ export default function fullKoolaid(options) {
 
                 resolve((isStatic ? target : req.model)[methodName](...args));
               });
+            }
+
+            /**
+             * invokes `after()` if specified
+             * @param {Object} result the result of the request
+             * @returns {Object} returns `result`
+             */
+            function postProcess(result) {
+              if (after) {
+                return after(result, ctx);
+              }
+              return result;
             }
 
             /**
@@ -145,6 +158,7 @@ export default function fullKoolaid(options) {
         return router;
       }, express.Router());
 
+    const table = getFlatRoutingTable(target);
     router.param(idParam, (req, res, next, id) => {
       ctx.run(() => {
         ctx.set(`Model`, target);
@@ -160,7 +174,23 @@ export default function fullKoolaid(options) {
             ctx.set(`model`, model);
             return next();
           })
-          .catch(next);
+          .catch((reason) => {
+            if (reason instanceof NotFound) {
+              const query = {
+                verb: req.method.toLowerCase(),
+                path: req.route.path
+              };
+
+              const row = _.find(table, (r) => r.verb === query.verb && r.path === query.path);
+              // Don't fail for static methods - they should work without a
+              // model
+              if (row.isStatic) {
+                return next();
+              }
+            }
+
+            next(reason);
+          });
       });
     });
 

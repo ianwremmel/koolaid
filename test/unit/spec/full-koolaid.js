@@ -19,6 +19,7 @@ describe('full-koolaid', () => {
                 source: 'body'
               }],
               accessType: 'write',
+              after: undefined,
               path: '/',
               verb: 'post',
             }]
@@ -32,6 +33,7 @@ describe('full-koolaid', () => {
                 source: 'query'
               }],
               accessType: 'write',
+              after: undefined,
               path: '/',
               verb: 'post'
             }],
@@ -40,6 +42,7 @@ describe('full-koolaid', () => {
                 source: 'body'
               }],
               accessType: 'write',
+              after: undefined,
               path: '/:id',
               verb: 'put'
             }]
@@ -58,6 +61,7 @@ describe('full-koolaid', () => {
                 source: 'body'
               }],
               accessType: 'write',
+              after: undefined,
               path: '/',
               verb: 'post',
             }]
@@ -71,6 +75,7 @@ describe('full-koolaid', () => {
                 source: 'query'
               }],
               accessType: 'write',
+              after: undefined,
               path: '/',
               verb: 'post'
             }],
@@ -79,6 +84,7 @@ describe('full-koolaid', () => {
                 source: 'body'
               }],
               accessType: 'write',
+              after: undefined,
               path: '/:id',
               verb: 'put'
             }]
@@ -86,10 +92,12 @@ describe('full-koolaid', () => {
           exists: {
             true: [{
               accessType: 'read',
+              after: undefined,
               path: '/:id/exists',
               verb: 'get'
             }, {
               accessType: 'read',
+              after: undefined,
               path: '/:id',
               verb: 'head'
             }]
@@ -103,6 +111,7 @@ describe('full-koolaid', () => {
       it('produces the correct routing table for a resource', () => {
         assert.deepEqual(getFlatRoutingTable(A), [{
           accessType: 'write',
+          after: undefined,
           verb: 'put',
           path: '/a/:id',
           methodName: 'update',
@@ -112,6 +121,7 @@ describe('full-koolaid', () => {
           ]
         }, {
           accessType: 'write',
+          after: undefined,
           verb: 'post',
           path: '/a/',
           methodName: 'update',
@@ -125,6 +135,7 @@ describe('full-koolaid', () => {
           ]
         }, {
           accessType: 'write',
+          after: undefined,
           verb: 'post',
           path: '/a/',
           methodName: 'create',

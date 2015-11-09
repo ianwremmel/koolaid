@@ -15,6 +15,9 @@ export default function method(options) {
     const method = getCurrentMethod(target, name);
     method.set(`path`, options.path.toLowerCase());
     method.set(`verb`, options.verb.toLowerCase());
+    if (options.after) {
+      method.set(`after`, options.after);
+    }
     finishCurrentMethod(target, name);
   };
 }
