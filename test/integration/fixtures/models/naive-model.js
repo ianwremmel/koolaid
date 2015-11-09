@@ -92,22 +92,12 @@ export default class NaiveModel extends RestModel {
 
   }
 
-  // Note: this implementation is really rest-only; it won`t work if called
-  // via NaiveModel.exists(id).
-  static exists() {
-    return null;
-  }
-
   static async update(body, filter, ctx) {
     const localModels = await (ctx.get(`Model`)).find(filter);
     models = localModels.reduce((models, model) => {
       models[model.id] = Object.assign(model, body);
       return models;
     }, models);
-  }
-
-  find() {
-    return this;
   }
 
   destroy(ctx) {

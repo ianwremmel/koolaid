@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import access from './decorators/access';
+import assert from 'assert';
 import cls from 'continuation-local-storage';
 import express from 'express';
 import {getFlatRoutingTable} from './lib/routing-table';
@@ -47,34 +48,64 @@ export default function fullKoolaid(options) {
 
   function mount(target) {
     let router;
-    router = _(getFlatRoutingTable(target)).sortBy(`isStatic`).reverse().values().reduce((router, row) => {
+
+    // Static methods need to be mounted first to ensure their path names don't
+    // look like :id`s (e.g. /model/count needs to be mounted before /model/id).
+    // Then, HEAD needs to come before GET because, aparently, express treats
+    // GET as HEAD.
+    router = _(getFlatRoutingTable(target)).sortByOrder([`isStatic`, `verb`], [`asc`, `asc`]).reverse().values().reduce((router, row) => {
       const {
+        isStatic,
+        methodName,
         params,
         path,
         verb
       } = row;
 
       router[verb](path, (req, res, next) => {
+        assert.equal(verb, req.method.toLowerCase());
+
         ctx.run(() => {
-          new Promise((resolve) => {
-            ctx.set(`Model`, target);
-            ctx.set(`user`, req.user);
-            if (_.isFunction(context)) {
-              context(ctx, req);
-            }
 
-            let args = [];
-            if (params) {
-              args = params.reduce((args, param) => {
-                const source = req[param.source];
-                args.push(param.name ? _.get(source, param.name) : source);
-                return args;
-              }, args);
-            }
+          executeRequest()
+            .then(setResponseStatusCode)
+            .then(setResponseBody)
+            .catch(next);
 
-            resolve((row.isStatic ? target : req.model)[row.methodName](...args));
-          })
-          .then((result) => {
+          /**
+           * Executes the appropriate method for the identified RespoModel
+           * @returns {Promise} Resolves on completion
+           */
+          function executeRequest() {
+            return new Promise((resolve) => {
+              ctx.set(`Model`, target);
+              ctx.set(`user`, req.user);
+              ctx.set(`req`, req);
+              ctx.set(`res`, res);
+
+              if (_.isFunction(context)) {
+                context(ctx, req);
+              }
+
+              let args = [];
+              if (params) {
+                args = params.reduce((rargs, rparam) => {
+                  const source = req[rparam.source];
+                  rargs.push(rparam.name ? _.get(source, rparam.name) : source);
+                  return rargs;
+                }, args);
+              }
+
+              resolve((isStatic ? target : req.model)[methodName](...args));
+            });
+          }
+
+          /**
+           * Determines the HTTP response code for `res`
+           * @param {Object} result the result of the request
+           * @returns {Object} returns `result`
+           */
+          function setResponseStatusCode(result) {
             if (!result) {
               res.status(204);
             }
@@ -90,9 +121,19 @@ export default function fullKoolaid(options) {
               res.status(200);
             }
 
+            return result;
+          }
+
+          /**
+           * Sets the HTTP response body for `res`
+           * @param {Object} result the result of the request
+           * @returns {Object} returns `result`
+           */
+          function setResponseBody(result) {
             res.json(result);
-          })
-          .catch(next);
+
+            return result;
+          }
         });
       });
 
@@ -103,12 +144,15 @@ export default function fullKoolaid(options) {
       ctx.run(() => {
         ctx.set(`Model`, target);
         ctx.set(`user`, req.user);
+        ctx.set(`req`, req);
+        ctx.set(`res`, res);
         if (_.isFunction(context)) {
           context(ctx, req);
         }
         target.findById(id)
           .then((model) => {
             req.model = model;
+            ctx.set(`model`, model);
             return next();
           })
           .catch(next);

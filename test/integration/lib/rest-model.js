@@ -1,5 +1,6 @@
 /* eslint no-unused-vars: [0] */
 import _ from 'lodash';
+import {NotFound} from '../../../src/lib/http-error';
 import {access, method, param} from '../../..';
 
 export default class RestModel {
@@ -9,6 +10,16 @@ export default class RestModel {
 
   isNew() {
     throw new Error(`not implemented`);
+  }
+
+  @method({verb: `GET`, path: `/count`})
+  @access(`read`)
+  @param({source: `query`, name: `filter`})
+  static async count(filter, ctx) {
+    const models = await ctx.get(`Model`).find(filter);
+    return {
+      count: models.length
+    };
   }
 
   @method({verb: `POST`, path: `/`})
@@ -37,29 +48,6 @@ export default class RestModel {
     throw new Error(`not implemented`);
   }
 
-  @method({verb: `PUT`, path: `/`})
-  @access(`write`)
-  @param({source: `body`})
-  static upsert(data, ctx) {
-    throw new Error(`not implemented`);
-  }
-
-  @method({verb: `GET`, path: `/count`})
-  @access(`read`)
-  @param({source: `query`, name: `filter`})
-  static async count(filter, ctx) {
-    const models = await ctx.get(`Model`).find(filter);
-    return {
-      count: models.length
-    };
-  }
-
-  @method({verb: `HEAD`, path: `/:id`})
-  @access(`read`)
-  static exists(ctx) {
-    throw new Error(`not implemented`);
-  }
-
   @method({verb: `POST`, path: `/update`})
   @access(`write`)
   @param({source: `body`})
@@ -68,16 +56,32 @@ export default class RestModel {
     throw new Error(`not implemented`);
   }
 
-  @method({verb: `GET`, path: `/:id`})
-  @access(`read`)
-  find(ctx) {
+  @method({verb: `PUT`, path: `/`})
+  @access(`write`)
+  @param({source: `body`})
+  static upsert(data, ctx) {
     throw new Error(`not implemented`);
+  }
+
+  @method({verb: `HEAD`, path: `/:id`})
+  @access(`read`)
+  static exists(ctx) {
+    if (ctx.get(`model`)) {
+      return null;
+    }
+    throw new NotFound();
   }
 
   @method({verb: `DELETE`, path: `/:id`})
   @access(`write`)
   destroy(ctx) {
     throw new Error(`not implemented`);
+  }
+
+  @method({verb: `GET`, path: `/:id`})
+  @access(`read`)
+  find(ctx) {
+    return this;
   }
 
   @method({verb: `PUT`, path: `/:id`})

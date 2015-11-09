@@ -79,9 +79,10 @@
       - 2
       - declaration
     generator-star-spacing:
-      - 1
-      - before: true
-        after: false
+      - 0
+      # - 1
+      # - before: true
+      #   after: false
     global-require:
       - 2
     guard-for-in:
@@ -108,7 +109,8 @@
       - 5
     max-nested-callbacks:
       - 1
-      - 3
+      # - 3
+      - 4
     max-params:
       - 2
       - 4
@@ -258,8 +260,9 @@
     no-octal:
       - 2
     no-param-reassign:
-      - 1
-      - props: true
+      - 0
+      # - 1
+      # - props: true
     no-path-concat:
       - 2
     no-process-env:

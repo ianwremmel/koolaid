@@ -351,7 +351,7 @@ describe(`Models`, () => {
       });
 
       // GET /:id/exists
-      describe.skip(`when called with GET`, () => {
+      describe(`when called with GET`, () => {
         it(`indicates a model was found with {exists: true}`, () => request(app)
           .get(`/naive-model/${id}/exists`)
           .expect(200, {
@@ -368,8 +368,8 @@ describe(`Models`, () => {
       // HEAD /:id
       describe(`when called with HEAD`, () => {
         it(`indicates a model exists with 204`, () => request(app)
-          .head(`/naive-model/${id}`)
-          .expect(204));
+            .head(`/naive-model/${id}`)
+            .expect(204));
 
         it(`indicates a model was not found with 404`, () => request(app)
           .head(`/naive-model/not-an-id`)
