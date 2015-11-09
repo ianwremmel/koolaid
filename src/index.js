@@ -3,7 +3,7 @@ import access from './decorators/access';
 import assert from 'assert';
 import cls from 'continuation-local-storage';
 import express from 'express';
-import {getFlatRoutingTable} from './lib/routing-table';
+import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
 import {middleware as httpErrorHandler, NotFound} from './lib/http-error';
 import method from './decorators/method';
 import param from './decorators/param';
@@ -18,8 +18,6 @@ import resource from './decorators/resource';
  * definitions
  * @param  {Function} options.context if defined, will be called at the start of
  * each request to inject extra context information
- * @param  {Object} options.idParam name of the route parameter to use as a
- * model's id
  * @returns {express.Router} Router that will handle all koolaid requests.
  */
 export default function fullKoolaid(options) {
@@ -29,8 +27,6 @@ export default function fullKoolaid(options) {
 
   const context = options.context;
   const models = requireDir(options.models);
-
-  const idParam = options.idParam || `id`;
 
   const router = express.Router();
 
@@ -49,11 +45,15 @@ export default function fullKoolaid(options) {
   function mount(target) {
     let router;
 
+    const routingTable = getRoutingTable(target);
+    const flatRoutingTable = flattenRoutingTable(routingTable);
+    const idParam = routingTable.idParam;
+
     // Static methods need to be mounted first to ensure their path names don't
     // look like :id`s (e.g. /model/count needs to be mounted before /model/id).
     // Then, HEAD needs to come before GET because, aparently, express treats
     // GET as HEAD.
-    router = _(getFlatRoutingTable(target))
+    router = _(flatRoutingTable)
       .sortByOrder([`isStatic`, `verb`], [`asc`, `asc`])
       .reverse()
       .values()
@@ -158,7 +158,6 @@ export default function fullKoolaid(options) {
         return router;
       }, express.Router());
 
-    const table = getFlatRoutingTable(target);
     router.param(idParam, (req, res, next, id) => {
       ctx.run(() => {
         ctx.set(`Model`, target);
@@ -181,7 +180,7 @@ export default function fullKoolaid(options) {
                 path: req.route.path
               };
 
-              const row = _.find(table, (r) => r.verb === query.verb && r.path === query.path);
+              const row = _.find(flatRoutingTable, (r) => r.verb === query.verb && r.path === query.path);
               // Don't fail for static methods - they should work without a
               // model
               if (row.isStatic) {

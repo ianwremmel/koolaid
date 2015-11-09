@@ -12,6 +12,7 @@ export function getRoutingTable(target) {
   while (key !== (key && key.constructor)) {
     const table = getTableForModel(key);
     tables.basePath = tables.basePath || table.basePath;
+    tables.idParam = tables.idParam || table.idParam;
     merge(tables.methods, table);
     key = Reflect.getPrototypeOf(key);
   }
@@ -43,10 +44,8 @@ export function getRoutingTable(target) {
   }
 }
 
-export function getFlatRoutingTable(target) {
+export function flattenRoutingTable(routingTable) {
   const table = [];
-  const routingTable = getRoutingTable(target);
-
   const basePath = routingTable.basePath;
   Object.keys(routingTable.methods).forEach((methodName) => {
     Object.keys(routingTable.methods[methodName]).forEach((rowIsStatic) => {
@@ -62,7 +61,13 @@ export function getFlatRoutingTable(target) {
       });
     });
   });
+
   return table;
+}
+
+export function getFlatRoutingTable(target) {
+  const routingTable = getRoutingTable(target);
+  return flattenRoutingTable(routingTable);
 }
 
 const tables = new Map();

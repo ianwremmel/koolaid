@@ -14,6 +14,7 @@ export default function resource(options) {
   return function _resource(target) {
     const table = getTableForModel(target);
     table.basePath = options.basePath;
+    table.idParam = options.idParam || `id`;
 
     if (!target.$hasContext) {
       contextualize(target, target);

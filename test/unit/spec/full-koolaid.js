@@ -48,7 +48,8 @@ describe('full-koolaid', () => {
             }]
           }
         },
-        basePath: 'a'
+        basePath: 'a',
+        idParam: 'id'
       });
     });
 
@@ -103,7 +104,8 @@ describe('full-koolaid', () => {
             }]
           }
         },
-        basePath: 'aa'
+        basePath: 'aa',
+        idParam: 'id'
       });
     });
 
