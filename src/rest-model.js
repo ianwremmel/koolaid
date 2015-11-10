@@ -68,7 +68,7 @@ export default class RestModel {
   @method({verb: `GET`, path: `/:id/exists`, after: (result, ctx) => {
     return {
       exists: result
-    }
+    };
   }})
   @method({verb: `HEAD`, path: `/:id`, after: (result, ctx) => {
     if (result) {
