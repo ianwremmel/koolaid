@@ -83,7 +83,6 @@ export default class NaiveModel extends RestModel {
     }
     catch (e) {
       if (e instanceof NotFound) {
-        ctx.set(`isNew`, true);
         return (ctx.get(`Model`)).create(data);
       }
 

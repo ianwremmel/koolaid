@@ -13,6 +13,7 @@
     "body-parser": "^1.14.1",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
+    "clarify": "^1.0.5",
     "documentation": "^3.0.3",
     "errorhandler": "^1.4.2",
     "eslint": "^1.9.0",
@@ -36,6 +37,7 @@
     "sinon": "^1.17.1",
     "supertest": "^1.1.0",
     "time-grunt": "^1.2.2",
+    "trace": "^2.0.1",
     "uuid": "^2.0.1"
   },
   "dependencies": {
