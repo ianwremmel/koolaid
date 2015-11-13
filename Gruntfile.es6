@@ -1,3 +1,6 @@
+require(`trace`);
+require(`clarify`);
+
 import {Instrumenter} from 'isparta';
 import loadGruntTasks from 'load-grunt-tasks';
 import pkg from './package';

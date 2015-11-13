@@ -68,6 +68,11 @@ function contextualizeMethod(obj, name, target) {
     param(target, name, descriptor);
     access(target, name, descriptor);
 
+    // Guarantee that all methods return a Promise
+    descriptor.value = _.wrap(descriptor.value, async function wrapper(fn, ...args) {
+      return await Reflect.apply(fn, this, args);
+    });
+
     Reflect.defineProperty(target, name, descriptor);
   }
 }
