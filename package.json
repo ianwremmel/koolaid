@@ -13,7 +13,6 @@
     "body-parser": "^1.14.1",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
-    "clarify": "^1.0.5",
     "documentation": "^3.0.3",
     "errorhandler": "^1.4.2",
     "eslint": "^1.9.0",
@@ -37,15 +36,16 @@
     "sinon": "^1.17.1",
     "supertest": "^1.1.0",
     "time-grunt": "^1.2.2",
-    "trace": "^2.0.1",
     "uuid": "^2.0.1"
   },
   "dependencies": {
+    "acl": "^0.4.9",
     "babel": "^5.8.29",
     "continuation-local-storage": "^3.1.4",
     "extend-error": "git://github.com/ianwremmel/extend-error.git",
     "lodash": "^3.10.1",
-    "require-dir": "^0.3.0"
+    "require-dir": "^0.3.0",
+    "shimmer": "^1.1.0"
   },
   "peerDependencies": {
     "express": ">= 4.5"

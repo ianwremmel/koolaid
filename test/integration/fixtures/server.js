@@ -8,8 +8,23 @@ import path from 'path';
 const app = module.exports = express();
 app.use(morgan(`dev`));
 app.use(bodyParser());
+
+app.use((req, res, next) => {
+  if (req.headers.authorization) {
+    req.user = {
+      id: req.headers.authorization
+    };
+  }
+
+  next();
+});
+
 app.use(koolaid({
-  models: path.join(__dirname, `models`)
+  models: path.join(__dirname, `models`),
+  access: {
+    acls: path.join(__dirname, `acls`),
+    backend: `memory`
+  }
 }));
 
 app.use(errorhandler());

@@ -1,11 +1,13 @@
 import _ from 'lodash';
 import assert from 'assert';
 import cls from 'continuation-local-storage';
+import {configure as configureAccess} from './decorators/access';
 import express from 'express';
 import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
 import {middleware as httpErrorHandler, NotFound} from './lib/http-error';
 import queryStringNumbers from './lib/query-string-numbers';
 import requireDir from 'require-dir';
+import shimmer from 'shimmer';
 
 /**
  * Main entry point
@@ -21,24 +23,60 @@ export default function router(options) {
     throw new Error(`\`options.models\` is required`);
   }
 
+  if (options.access) {
+    configureAccess(options.access);
+  }
+
   const context = options.context;
-  const models = requireDir(options.models);
+  // const models = requireDir(options.models);
+  const models = {
+    'authenticated': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/authenticated`),
+    'complicated-access': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/complicated-access`),
+    // 'everyone': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/everyone`),
+    // 'ping': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/ping`)
+  };
+  const ctx = cls.createNamespace(`ctx`);
+
+  function bind(fn) {
+    if (fn) {
+      return ctx.bind(fn);
+    }
+  }
+
+  shimmer.wrap(Promise.prototype, `then`, (then) => {
+    return function thenPrime(...args) {
+      return Reflect.apply(then, this, args.map(bind));
+    };
+  });
 
   const router = express.Router();
 
-  const ctx = cls.createNamespace(`ctx`);
+  router.use(queryStringNumbers());
+  router.use((req, res, next) => {
+    console.log('configure context');
+    ctx.run(() => {
+      ctx.set(`user`, req.user);
+      ctx.set(`req`, req);
+      ctx.set(`res`, res);
+      if (_.isFunction(context)) {
+        context(ctx, req);
+      }
+      next();
+    });
+  });
 
   Object.keys(models).reduce((router, modelName) => {
     const model = models[modelName];
-    router.use(queryStringNumbers());
     router.use(mount(model));
-    router.use(httpErrorHandler());
     return router;
   }, router);
+
+  router.use(httpErrorHandler());
 
   return router;
 
   function mount(target) {
+    console.log(`mount`, target);
     let router = express.Router();
 
     const routingTable = getRoutingTable(target);
@@ -46,17 +84,13 @@ export default function router(options) {
     const idParam = routingTable.idParam;
 
     router.use((req, res, next) => {
+      console.log('set model');
+      if (ctx.get(`Model`)) {
+        throw new Error(`\`ctx.Model\` cannot be set twice`);
+      }
       ctx.run(() => {
         ctx.set(`Model`, target);
-        ctx.set(`user`, req.user);
-        ctx.set(`req`, req);
-        ctx.set(`res`, res);
-        if (_.isFunction(context)) {
-          context(ctx, req);
-        }
-        ctx.run(() => {
-          next();
-        });
+        next();
       });
     });
 
@@ -159,7 +193,7 @@ export default function router(options) {
       }, router);
 
     router.param(idParam, (req, res, next, id) => {
-
+      ctx.get('model');
       target.findById(id)
         .then((model) => {
           req.model = model;
