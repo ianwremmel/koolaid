@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import ACL from 'acl';
 import cls from 'continuation-local-storage';
+import extendError from 'extend-error';
 import {findOrCreateMap} from '../lib/map';
 import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
@@ -11,6 +12,7 @@ let accessControlList, acl;
 const aclMap = new Map();
 
 const accessMap = new Map();
+const NoAccessSpecified = extendError({subTypeName: `NoAccessSpecified`});
 
 /**
  * Decorator. Use it to specify the accessType needed to interact with the method
@@ -96,27 +98,24 @@ export function wrap(target, name, descriptor) {
   });
 }
 
-function isAllowed(target, name) {
-  return new Promise((resolve, reject) => {
-    const ctx = cls.getNamespace(`ctx`);
-    const req = ctx.get(`req`);
-    if (!req) {
-      throw new Error(`Cannot use @access in non-http environments`);
-    }
-    const principal = req.headers.authorization || `unauthenticated`;
-    const resourceName = (isStatic(target) ? target : target.constructor).name;
+async function isAllowed(target, name) {
+  const ctx = cls.getNamespace(`ctx`);
+  const req = ctx.get(`req`);
+  if (!req) {
+    throw new Error(`Cannot use @access in non-http environments`);
+  }
+  const principal = req.headers.authorization || `unauthenticated`;
+  const resourceName = (isStatic(target) ? target : target.constructor).name;
+  try {
     const accessType = getAccessForMethod(target, name);
-
-    ctx.run(() => {
-      ctx.set('running', true);
-      acl.isAllowed(principal, resourceName, accessType, (err, res) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(res);
-      });
-    });
-  });
+    return await acl.isAllowed(principal, resourceName, accessType);
+  }
+  catch (e) {
+    if (e instanceof NoAccessSpecified) {
+      return true;
+    }
+    throw e;
+  }
 }
 
 function setAccessForMethod(target, name, accessType) {
@@ -145,7 +144,7 @@ export function getAccessForMethod(target, name, methodIsStatic) {
   const accessType = map.get(name);
   if (!accessType) {
     const resourceName = (isStatic(target) ? target : target.constructor).name;
-    throw new Error(`No accessType defined for ${resourceName}${isStatic(target) ? '.' : '#'}${name}`);
+    throw new NoAccessSpecified(`No accessType defined for ${resourceName}${isStatic(target) ? '.' : '#'}${name}`);
   }
 
   return accessType;

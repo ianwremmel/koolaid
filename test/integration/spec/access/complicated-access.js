@@ -25,8 +25,8 @@ describe(`@access`, () => {
         .expect(200));
     });
 
-    describe(`GET /:id`, () => {
-      it.only(`cannot be accessed by anonymous users`, () => request(app)
+    describe(`PUT /:id`, () => {
+      it(`cannot be accessed by anonymous users`, () => request(app)
         .put(`/complicated-access/mine`)
         .expect(403));
 

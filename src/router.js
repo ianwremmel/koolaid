@@ -28,13 +28,7 @@ export default function router(options) {
   }
 
   const context = options.context;
-  // const models = requireDir(options.models);
-  const models = {
-    'authenticated': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/authenticated`),
-    'complicated-access': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/complicated-access`),
-    // 'everyone': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/everyone`),
-    // 'ping': require(`/Users/ian/projects/koolaid/test/integration/fixtures/models/ping`)
-  };
+  const models = requireDir(options.models);
   const ctx = cls.createNamespace(`ctx`);
 
   function bind(fn) {
@@ -53,7 +47,6 @@ export default function router(options) {
 
   router.use(queryStringNumbers());
   router.use((req, res, next) => {
-    console.log('configure context');
     ctx.run(() => {
       ctx.set(`user`, req.user);
       ctx.set(`req`, req);
@@ -76,15 +69,13 @@ export default function router(options) {
   return router;
 
   function mount(target) {
-    console.log(`mount`, target);
     let router = express.Router();
 
     const routingTable = getRoutingTable(target);
     const flatRoutingTable = flattenRoutingTable(routingTable);
     const idParam = routingTable.idParam;
 
-    router.use((req, res, next) => {
-      console.log('set model');
+    router.use(`/${routingTable.basePath}`, (req, res, next) => {
       if (ctx.get(`Model`)) {
         throw new Error(`\`ctx.Model\` cannot be set twice`);
       }
@@ -193,7 +184,7 @@ export default function router(options) {
       }, router);
 
     router.param(idParam, (req, res, next, id) => {
-      ctx.get('model');
+      ctx.get(`model`);
       target.findById(id)
         .then((model) => {
           req.model = model;
