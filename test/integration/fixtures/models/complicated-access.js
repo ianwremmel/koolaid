@@ -1,4 +1,4 @@
-import {access, method, resource} from '../../../..';
+import {access, create, method, resource} from '../../../..';
 
 @resource({basePath: `complicated-access`})
 export default class ComplicatedAccess {
@@ -10,18 +10,29 @@ export default class ComplicatedAccess {
 
   @access(`read`)
   static findById() {
-    return new ComplicatedAccess();
+    const ca = new ComplicatedAccess();
+    ca.creator = 14;
+    return ca;
   }
 
   @method({verb: `POST`, path: `/`})
   @access(`write`)
+  @create
   static create() {
-    return {};
+    const ca = new ComplicatedAccess();
+    ca.isNew = function isNew() {
+      return false;
+    };
+    return ca;
   }
 
   @method({verb: `PUT`, path: `/:id`})
   @access(`write`)
   update() {
-    return {};
+    const ca = new ComplicatedAccess();
+    ca.isNew = function isNew() {
+      return false;
+    };
+    return ca;
   }
 }

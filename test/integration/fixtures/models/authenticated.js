@@ -1,4 +1,4 @@
-import {access, method, resource} from '../../../..';
+import {access, create, method, resource} from '../../../..';
 
 @resource({basePath: `authenticated`})
 export default class Authenticated {
@@ -10,6 +10,7 @@ export default class Authenticated {
 
   @method({verb: `POST`, path: `/`})
   @access(`write`)
+  @create
   static create() {
     return {};
   }

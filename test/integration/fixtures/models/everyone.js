@@ -1,4 +1,4 @@
-import {access, method, resource} from '../../../..';
+import {access, create, method, resource} from '../../../..';
 
 @resource({basePath: `everyone`})
 export default class Everyone {
@@ -10,6 +10,7 @@ export default class Everyone {
 
   @method({verb: `POST`, path: `/`})
   @access(`write`)
+  @create
   static create() {
     return {};
   }

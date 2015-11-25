@@ -37,7 +37,7 @@ describe(`@access`, () => {
 
       it(`can be accessed by its owner`, () => request(app)
         .put(`/complicated-access/mine`)
-        .set(`Authorization`, `owner`)
+        .set(`Authorization`, `Basic 14`)
         .expect(403));
     });
   });

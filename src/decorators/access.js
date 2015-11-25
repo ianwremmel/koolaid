@@ -8,7 +8,7 @@ import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
 import requireDir from 'require-dir';
 
-let accessControlList, acl;
+let accessControlList, acl, principals;
 const aclMap = new Map();
 
 const accessMap = new Map();
@@ -17,6 +17,9 @@ const NoAccessSpecified = extendError({subTypeName: `NoAccessSpecified`});
 /**
  * Decorator. Use it to specify the accessType needed to interact with the method
  * or model being decorated.
+ * Reminder: @access cannot be a part of at @method; @method translates requests
+ * to method calls while @access indicates whether or not the user is allowed to
+ * make the call.
  * @param {string} accessType one of `read` or `write`
  * @returns {function}
  */
@@ -28,6 +31,53 @@ export default function decorate(accessType) {
   return function access(target, name) {
     setAccessForMethod(target, name, accessType);
   };
+}
+
+export function create(target, name, descriptor) {
+  bindUserToModel(descriptor, function(userId) {
+    return async function addUserRoles(model) {
+      // TODO use idParam from @resource
+      const modelId = `creator-${model.id}`;
+      await acl.addUserRoles(userId, modelId);
+    };
+  });
+
+  return descriptor;
+}
+
+export function destroy(target, name, descriptor) {
+  bindUserToModel(descriptor, function(userId) {
+    return async function removeUserRoles(model) {
+      // TODO use idParam from @resource
+      const modelId = `creator-${model.id}`;
+      await acl.removeUserRoles(userId, modelId);
+    };
+  });
+
+  return descriptor;
+}
+
+function bindUserToModel(descriptor, func) {
+  descriptor.value = _.wrap(descriptor.value, async function annotate(fn, ...args) {
+    const ctx = cls.getNamespace(`ctx`);
+    const user = ctx.get(`user`);
+    const models = await fn(...args);
+    if (!user) {
+      return models;
+    }
+    // TODO user needs a configurable idParam
+    const userId = user.id;
+
+    const f = func(userId);
+
+    if (_.isArray(models)) {
+      await Promise.all(models.map(f));
+    }
+    else {
+      await f(models);
+    }
+    return models;
+  });
 }
 
 /**
@@ -55,6 +105,7 @@ export function configure(options) {
   }
 
   acl = new ACL(new ACL[`${options.backend}Backend`](...options.backendArguments));
+  // TODO is there a better way to set up the default roles?
   acl.addUserRoles(`authenticated`, `$authenticated`);
   acl.addUserRoles(`unauthenticated`, `$unauthenticated`);
   acl.addRoleParents(`$authenticated`, `$everyone`);

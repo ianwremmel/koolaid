@@ -1,7 +1,7 @@
 /* eslint no-unused-vars: [0] */
 import _ from 'lodash';
 import {NotFound} from './lib/http-error';
-import access from './decorators/access';
+import {default as access, create, destroy} from './decorators/access';
 import method from './decorators/method';
 import param from './decorators/param';
 
@@ -27,6 +27,7 @@ export default class RestModel {
   @method({verb: `POST`, path: `/`})
   @access(`write`)
   @param({source: `body`})
+  @create
   static create(data, ctx) {
     throw new Error(`not implemented`);
   }
@@ -34,6 +35,7 @@ export default class RestModel {
   @method({verb: `DELETE`, path: `/`})
   @access(`write`)
   @param({source: `query`, name: `filter`})
+  @destroy
   static destroy(filter, ctx) {
     throw new Error(`not implemented`);
   }
@@ -96,6 +98,7 @@ export default class RestModel {
 
   @method({verb: `DELETE`, path: `/:id`})
   @access(`write`)
+  @destroy
   destroy(ctx) {
     throw new Error(`not implemented`);
   }
