@@ -37,8 +37,9 @@ export function create(target, name, descriptor) {
   bindUserToModel(descriptor, function(userId) {
     return async function addUserRoles(model) {
       // TODO use idParam from @resource
-      const modelId = `creator-${model.id}`;
+      const modelId = `owner-${model.id}`;
       await acl.addUserRoles(userId, modelId);
+      await acl.addRoleParents(modelId, `$authenticated`)
     };
   });
 
@@ -49,7 +50,7 @@ export function destroy(target, name, descriptor) {
   bindUserToModel(descriptor, function(userId) {
     return async function removeUserRoles(model) {
       // TODO use idParam from @resource
-      const modelId = `creator-${model.id}`;
+      const modelId = `owner-${model.id}`;
       await acl.removeUserRoles(userId, modelId);
     };
   });
@@ -106,6 +107,7 @@ export function configure(options) {
 
   acl = new ACL(new ACL[`${options.backend}Backend`](...options.backendArguments));
   // TODO is there a better way to set up the default roles?
+  // TODO these should be `await`ed
   acl.addUserRoles(`authenticated`, `$authenticated`);
   acl.addUserRoles(`unauthenticated`, `$unauthenticated`);
   acl.addRoleParents(`$authenticated`, `$everyone`);
@@ -159,7 +161,15 @@ async function isAllowed(target, name) {
   const resourceName = (isStatic(target) ? target : target.constructor).name;
   try {
     const accessType = getAccessForMethod(target, name);
-    return await acl.isAllowed(principal, resourceName, accessType);
+    let access = await acl.isAllowed(principal, resourceName, accessType);
+    if (!access) {
+      const model = ctx.get(`model`);
+      if (!model) {
+        return access;
+      }
+      access = await acl.isAllowed(principal, `creator-${model.id}`, accessType);
+    }
+    return access;
   }
   catch (e) {
     if (e instanceof NoAccessSpecified) {

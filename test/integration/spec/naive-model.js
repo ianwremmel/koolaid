@@ -8,6 +8,7 @@ describe(`Models`, () => {
 
     afterEach(() => request(app)
       .delete(`/naive-model`)
+      .set(`Authorization`, `Basic 14`)
       .expect(204));
 
     // POST /
@@ -17,6 +18,7 @@ describe(`Models`, () => {
         id = uuid.v4();
         return request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id
           })
@@ -25,6 +27,7 @@ describe(`Models`, () => {
 
       it(`creates a model`, () => request(app)
         .post(`/naive-model`)
+        .set(`Authorization`, `Basic 14`)
         .send({
           id: uuid.v4()
         })
@@ -32,6 +35,7 @@ describe(`Models`, () => {
 
       it(`does not allow duplicates`, () => request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id
           })
@@ -45,6 +49,7 @@ describe(`Models`, () => {
         id = uuid.v4();
         return request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id
           })
@@ -53,6 +58,7 @@ describe(`Models`, () => {
 
       it(`creates a new model`, () => request(app)
         .put(`/naive-model`)
+        .set(`Authorization`, `Basic 14`)
         .send({
           id: uuid.v4()
         })
@@ -60,6 +66,7 @@ describe(`Models`, () => {
 
       it(`updates an existing model`, () => request(app)
         .put(`/naive-model`)
+        .set(`Authorization`, `Basic 14`)
         .send({
           id
         })
@@ -75,6 +82,7 @@ describe(`Models`, () => {
         id3 = uuid.v4();
         return Promise.all([id1, id2, id3].map((id, index) => request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id,
             extraData: index
@@ -85,6 +93,7 @@ describe(`Models`, () => {
       it(`updates all models`, (done) => {
         request(app)
           .post(`/naive-model/update`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             extraData: 5
           })
@@ -96,6 +105,7 @@ describe(`Models`, () => {
 
             return request(app)
               .get(`/naive-model`)
+              .set(`Authorization`, `Basic 14`)
               .expect(200, [{
                 id: id1,
                 extraData: 5
@@ -118,6 +128,7 @@ describe(`Models`, () => {
       it(`updates the specified models`, (done) => {
         request(app)
           .post(`/naive-model/update?filter[where][extraData]=2`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             extraData: 5
           })
@@ -129,6 +140,7 @@ describe(`Models`, () => {
 
             return request(app)
               .get(`/naive-model`)
+              .set(`Authorization`, `Basic 14`)
               .expect(200, [{
                 id: id1,
                 extraData: 0
@@ -157,6 +169,7 @@ describe(`Models`, () => {
         id2 = uuid.v4();
         return Promise.all([id1, id2].map((id, index) => request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id,
             extraData: index + 1
@@ -166,6 +179,7 @@ describe(`Models`, () => {
 
       it(`retrieves all models`, () => request(app)
         .get(`/naive-model`)
+        .set(`Authorization`, `Basic 14`)
         .expect(200, [{
           id: id1,
           extraData: 1
@@ -176,6 +190,7 @@ describe(`Models`, () => {
 
       it(`retrieves a filtered subset of models `, () => request(app)
         .get(`/naive-model?filter[where][extraData]=2`)
+        .set(`Authorization`, `Basic 14`)
         .expect(200, [{
           id: id2,
           extraData: 2
@@ -186,6 +201,7 @@ describe(`Models`, () => {
     describe(`.destroyAll()`, () => {
       beforeEach(() => Promise.all([1, 2].map((id) => request(app)
         .post(`/naive-model`)
+        .set(`Authorization`, `Basic 14`)
         .send({
           id,
           extraData: id
@@ -195,10 +211,12 @@ describe(`Models`, () => {
       describe(`without options`, () => {
         beforeEach(() => request(app)
           .delete(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .expect(204));
 
         it(`deletes all models`, () => request(app)
           .get(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .expect(200));
       });
 
@@ -206,6 +224,7 @@ describe(`Models`, () => {
         it(`deletes a filtered subset of all models`, (done) => {
           request(app)
             .delete(`/naive-model?filter[where][extraData]=2`)
+            .set(`Authorization`, `Basic 14`)
             .expect(204)
             .end((err) => {
               if (err) {
@@ -214,6 +233,7 @@ describe(`Models`, () => {
 
               request(app)
                 .get(`/naive-model`)
+                .set(`Authorization`, `Basic 14`)
                 .expect(200)
                 .end((err, res) => {
                   if (err) {
@@ -234,6 +254,7 @@ describe(`Models`, () => {
     describe(`.count()`, () => {
       beforeEach(() => Promise.all([1, 2].map((id, index) => request(app)
         .post(`/naive-model`)
+        .set(`Authorization`, `Basic 14`)
         .send({
           id,
           extraData: index + 1
@@ -242,12 +263,14 @@ describe(`Models`, () => {
 
       it(`returns the number of existing models`, () => request(app)
         .get(`/naive-model/count`)
+        .set(`Authorization`, `Basic 14`)
         .expect(200, {
           count: 2
         }));
 
       it(`returns the number of existing models matching a given filter`, () => request(app)
         .get(`/naive-model/count`)
+        .set(`Authorization`, `Basic 14`)
         .query({filter: {where: {extraData: 2}}})
         .expect(200, {
           count: 1
@@ -261,6 +284,7 @@ describe(`Models`, () => {
         id = uuid.v4();
         return request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id
           })
@@ -270,6 +294,7 @@ describe(`Models`, () => {
       it(`deletes the specified model`, (done) => {
         request(app)
           .delete(`/naive-model/${id}`)
+          .set(`Authorization`, `Basic 14`)
           .expect(204)
           .end((err) => {
             if (err) {
@@ -278,6 +303,7 @@ describe(`Models`, () => {
 
             request(app)
               .get(`/naive-model/${id}`)
+              .set(`Authorization`, `Basic 14`)
               .expect(404)
               .end((err) => {
                 if (err) {
@@ -296,6 +322,7 @@ describe(`Models`, () => {
         id = uuid.v4();
         return request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id
           })
@@ -304,6 +331,7 @@ describe(`Models`, () => {
 
       it(`returns the desired model`, () => request(app)
           .get(`/naive-model/${id}`)
+          .set(`Authorization`, `Basic 14`)
           .expect(200, {
             id
           }));
@@ -312,6 +340,7 @@ describe(`Models`, () => {
         const id = uuid.v4();
         return request(app)
           .get(`/naive-model/${id}`)
+          .set(`Authorization`, `Basic 14`)
           .expect(404);
       });
 
@@ -324,6 +353,7 @@ describe(`Models`, () => {
         id = uuid.v4();
         return request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id,
             extraData: 1
@@ -333,6 +363,7 @@ describe(`Models`, () => {
 
       it(`updates a model instance`, () => request(app)
         .put(`/naive-model/${id}`)
+        .set(`Authorization`, `Basic 14`)
         .send({
           id,
           extraData: 2
@@ -349,6 +380,7 @@ describe(`Models`, () => {
         id = uuid.v4();
         return request(app)
           .post(`/naive-model`)
+          .set(`Authorization`, `Basic 14`)
           .send({
             id
           })
@@ -359,12 +391,14 @@ describe(`Models`, () => {
       describe(`when called with GET`, () => {
         it(`indicates a model was found with {exists: true}`, () => request(app)
           .get(`/naive-model/${id}/exists`)
+          .set(`Authorization`, `Basic 14`)
           .expect(200, {
             exists: true
           }));
 
         it(`indicates a model was not found with {exists: false}`, () => request(app)
           .get(`/naive-model/not-an-id/exists`)
+          .set(`Authorization`, `Basic 14`)
           .expect(200, {
             exists: false
           }));
@@ -374,10 +408,12 @@ describe(`Models`, () => {
       describe(`when called with HEAD`, () => {
         it(`indicates a model exists with 204`, () => request(app)
             .head(`/naive-model/${id}`)
+            .set(`Authorization`, `Basic 14`)
             .expect(204));
 
         it(`indicates a model was not found with 404`, () => request(app)
           .head(`/naive-model/not-an-id`)
+          .set(`Authorization`, `Basic 14`)
           .expect(404));
       });
 
