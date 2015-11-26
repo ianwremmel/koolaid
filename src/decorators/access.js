@@ -33,13 +33,15 @@ export default function decorate(accessType) {
   };
 }
 
+// FIXME create/destroy must be applied manually at leaf nodes
 export function create(target, name, descriptor) {
   bindUserToModel(descriptor, function(userId) {
     return async function addUserRoles(model) {
       // TODO use idParam from @resource
-      const modelId = `owner-${model.id}`;
-      await acl.addUserRoles(userId, modelId);
-      await acl.addRoleParents(modelId, `$authenticated`)
+      const roleId = `model-${model.id}`;
+      console.log(`@create`, userId, roleId);
+      await acl.addUserRoles(userId, roleId);
+      await acl.addRoleParents(roleId, `$authenticated`)
     };
   });
 
@@ -50,8 +52,9 @@ export function destroy(target, name, descriptor) {
   bindUserToModel(descriptor, function(userId) {
     return async function removeUserRoles(model) {
       // TODO use idParam from @resource
-      const modelId = `owner-${model.id}`;
-      await acl.removeUserRoles(userId, modelId);
+      const roleId = `model-${model.id}`;
+      console.log(`@destroy`, userId, roleId);
+      await acl.removeUserRoles(userId, roleId);
     };
   });
 
@@ -108,7 +111,6 @@ export function configure(options) {
   acl = new ACL(new ACL[`${options.backend}Backend`](...options.backendArguments));
   // TODO is there a better way to set up the default roles?
   // TODO these should be `await`ed
-  acl.addUserRoles(`authenticated`, `$authenticated`);
   acl.addUserRoles(`unauthenticated`, `$unauthenticated`);
   acl.addRoleParents(`$authenticated`, `$everyone`);
   acl.addRoleParents(`$unauthenticated`, `$everyone`);
@@ -153,23 +155,26 @@ export function wrap(target, name, descriptor) {
 
 async function isAllowed(target, name) {
   const ctx = cls.getNamespace(`ctx`);
-  const req = ctx.get(`req`);
-  if (!req) {
-    throw new Error(`Cannot use @access in non-http environments`);
+
+  // TODO principal should be extracted from req.user.id, not auth header
+  const user = ctx.get(`user`);
+  let principal = `unauthenticated`;
+  if (user) {
+    acl.addUserRoles(user.id, `$authenticated`)
+    principal = user.id;
   }
-  const principal = req.headers.authorization || `unauthenticated`;
-  const resourceName = (isStatic(target) ? target : target.constructor).name;
+  const resourceName = computeResourceName(target, name);
+  console.log(principal, resourceName, name);
   try {
     const accessType = getAccessForMethod(target, name);
-    let access = await acl.isAllowed(principal, resourceName, accessType);
-    if (!access) {
-      const model = ctx.get(`model`);
-      if (!model) {
-        return access;
-      }
-      access = await acl.isAllowed(principal, `creator-${model.id}`, accessType);
+    const model = ctx.get(`model`);
+    if (model) {
+      const access = await acl.isAllowed(principal, `model-${model.id}`, accessType);
+      console.log('has model', principal, access, await acl.userRoles(principal));
+      return access;
+
     }
-    return access;
+    return await acl.isAllowed(principal, resourceName, accessType);
   }
   catch (e) {
     if (e instanceof NoAccessSpecified) {
@@ -177,6 +182,20 @@ async function isAllowed(target, name) {
     }
     throw e;
   }
+}
+
+function computeResourceName(target, name) {
+  const methodIsStatic = isStatic(target);
+  let className, separator;
+  if (methodIsStatic) {
+    className = target.name;
+    separator = `.`;
+  }
+  else {
+    className = target.constructor.name;
+    separator = `#`;
+  }
+  return `${className}${separator}*`;
 }
 
 function setAccessForMethod(target, name, accessType) {

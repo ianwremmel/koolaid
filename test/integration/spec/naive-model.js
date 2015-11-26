@@ -4,7 +4,7 @@ import request from 'supertest';
 import uuid from 'uuid';
 
 describe(`Models`, () => {
-  describe(`NaiveModel`, () => {
+  describe(`RestModel`, () => {
 
     afterEach(() => request(app)
       .delete(`/naive-model`)

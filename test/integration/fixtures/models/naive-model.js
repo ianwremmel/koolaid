@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {HttpError, resource, RestModel} from '../../../..';
+import {create, HttpError, resource, RestModel} from '../../../..';
 import uuid from 'uuid';
 
 const {BadRequest, Conflict, NotFound} = HttpError;
@@ -12,6 +12,7 @@ export default class NaiveModel extends RestModel {
     return ctx.get(`isNew`);
   }
 
+  @create
   static create(data, ctx) {
     if (models[data.id]) {
       throw new Conflict(`A NaiveModel with id ${data.id} already exists.`);
