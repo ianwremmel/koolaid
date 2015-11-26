@@ -14,7 +14,6 @@ describe(`koolaid`, () => {
               params: [{
                 source: `body`
               }],
-              accessType: `write`,
               after: undefined,
               path: `/`,
               verb: `post`
@@ -28,7 +27,6 @@ describe(`koolaid`, () => {
                 name: `filter`,
                 source: `query`
               }],
-              accessType: `write`,
               after: undefined,
               path: `/`,
               verb: `post`
@@ -37,7 +35,6 @@ describe(`koolaid`, () => {
               params: [{
                 source: `body`
               }],
-              accessType: `write`,
               after: undefined,
               path: `/:id`,
               verb: `put`
@@ -57,7 +54,6 @@ describe(`koolaid`, () => {
               params: [{
                 source: `body`
               }],
-              accessType: `write`,
               after: undefined,
               path: `/`,
               verb: `post`
@@ -71,7 +67,6 @@ describe(`koolaid`, () => {
                 name: `filter`,
                 source: `query`
               }],
-              accessType: `write`,
               after: undefined,
               path: `/`,
               verb: `post`
@@ -80,7 +75,6 @@ describe(`koolaid`, () => {
               params: [{
                 source: `body`
               }],
-              accessType: `write`,
               after: undefined,
               path: `/:id`,
               verb: `put`
@@ -88,12 +82,10 @@ describe(`koolaid`, () => {
           },
           exists: {
             true: [{
-              accessType: `read`,
               after: undefined,
               path: `/:id/exists`,
               verb: `get`
             }, {
-              accessType: `read`,
               after: undefined,
               path: `/:id`,
               verb: `head`
@@ -108,7 +100,6 @@ describe(`koolaid`, () => {
     describe(`getFlatRoutingTable`, () => {
       it(`produces the correct routing table for a resource`, () => {
         assert.deepEqual(getFlatRoutingTable(A), [{
-          accessType: `write`,
           after: undefined,
           verb: `put`,
           path: `/a/:id`,
@@ -118,7 +109,6 @@ describe(`koolaid`, () => {
             {source: `body`}
           ]
         }, {
-          accessType: `write`,
           after: undefined,
           verb: `post`,
           path: `/a/`,
@@ -132,7 +122,6 @@ describe(`koolaid`, () => {
             }
           ]
         }, {
-          accessType: `write`,
           after: undefined,
           verb: `post`,
           path: `/a/`,

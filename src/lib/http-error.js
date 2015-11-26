@@ -6,6 +6,11 @@ const HttpError = extendError({
 
 function middleware() {
   return function handler(err, req, res, next) {
+    if (process.env.NODE_ENV !== `production`) {
+      /* eslint no-console: [0] */
+      console.error(err.stack);
+    }
+
     if (!(err instanceof HttpError)) {
       return next(err);
     }
