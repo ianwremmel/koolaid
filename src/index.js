@@ -1,4 +1,4 @@
-import access from './decorators/access';
+import {default as access} from './decorators/access';
 import HttpError from './lib/http-error';
 import method from './decorators/method';
 import param from './decorators/param';

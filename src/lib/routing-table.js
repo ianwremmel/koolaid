@@ -1,5 +1,4 @@
 import {findOrCreateMap} from './map';
-import {getAccessForMethod} from '../decorators/access';
 import isStatic from './is-static';
 import path from 'path';
 
@@ -22,12 +21,11 @@ export function getRoutingTable(target) {
   function merge(dest, source) {
     source.forEach((value, methodName) => {
       dest[methodName] = dest[methodName] || {};
-      value.forEach((value, isStatic) => {
+      value.forEach((value, methodIsStatic) => {
         if (value.has(`methods`)) {
-          const routes = dest[methodName][isStatic] = dest[methodName][isStatic] || [];
+          const routes = dest[methodName][methodIsStatic] = dest[methodName][methodIsStatic] || [];
           value.get(`methods`).forEach((method) => {
             const route = {
-              accessType: getAccessForMethod(target, methodName),
               after: method.get(`after`),
               path: method.get(`path`),
               verb: method.get(`verb`)

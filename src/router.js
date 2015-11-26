@@ -6,6 +6,7 @@ import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
 import {middleware as httpErrorHandler, NotFound} from './lib/http-error';
 import queryStringNumbers from './lib/query-string-numbers';
 import requireDir from 'require-dir';
+import shimmer from 'shimmer';
 
 /**
  * Main entry point
@@ -23,18 +24,42 @@ export default function router(options) {
 
   const context = options.context;
   const models = requireDir(options.models);
+  const ctx = cls.createNamespace(`ctx`);
+
+  function bind(fn) {
+    if (fn) {
+      return ctx.bind(fn);
+    }
+  }
+
+  shimmer.wrap(Promise.prototype, `then`, (then) => {
+    return function thenPrime(...args) {
+      return Reflect.apply(then, this, args.map(bind));
+    };
+  });
 
   const router = express.Router();
 
-  const ctx = cls.createNamespace(`ctx`);
+  router.use(queryStringNumbers());
+  router.use((req, res, next) => {
+    ctx.run(() => {
+      ctx.set(`user`, req.user);
+      ctx.set(`req`, req);
+      ctx.set(`res`, res);
+      if (_.isFunction(context)) {
+        context(ctx, req);
+      }
+      next();
+    });
+  });
 
   Object.keys(models).reduce((router, modelName) => {
     const model = models[modelName];
-    router.use(queryStringNumbers());
     router.use(mount(model));
-    router.use(httpErrorHandler());
     return router;
   }, router);
+
+  router.use(httpErrorHandler());
 
   return router;
 
@@ -45,18 +70,13 @@ export default function router(options) {
     const flatRoutingTable = flattenRoutingTable(routingTable);
     const idParam = routingTable.idParam;
 
-    router.use((req, res, next) => {
+    router.use(`/${routingTable.basePath}`, (req, res, next) => {
+      if (ctx.get(`Model`)) {
+        throw new Error(`\`ctx.Model\` cannot be set twice`);
+      }
       ctx.run(() => {
         ctx.set(`Model`, target);
-        ctx.set(`user`, req.user);
-        ctx.set(`req`, req);
-        ctx.set(`res`, res);
-        if (_.isFunction(context)) {
-          context(ctx, req);
-        }
-        ctx.run(() => {
-          next();
-        });
+        next();
       });
     });
 
@@ -159,7 +179,7 @@ export default function router(options) {
       }, router);
 
     router.param(idParam, (req, res, next, id) => {
-
+      ctx.get(`model`);
       target.findById(id)
         .then((model) => {
           req.model = model;

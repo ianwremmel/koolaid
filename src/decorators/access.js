@@ -1,75 +1,110 @@
+import cls from 'continuation-local-storage';
 import _ from 'lodash';
-import {findOrCreateMap} from '../lib/map';
+import {findOrCreateMap, findTargetInMap} from '../lib/map';
 import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
 
-const accessTable = new Map();
-
-function defaultAccessCallback() {
-  return true;
-}
-
-let accessCallback = defaultAccessCallback;
-
-async function checkAccess(...args) {
-  // ...args needs to contain target, accessType, userId, and objectId (if not
-  // static)
-  return await accessCallback(...args);
-}
-
-export default function access(accessType) {
-  if (!accessType) {
-    throw new Error(`\`accessType\` is required`);
+export default function decorate(access) {
+  if (_.isString(access)) {
+    return setAccessType(access);
   }
 
-  return function _access(target, name) {
-    setAccessForMethod(target, name, accessType);
-  };
+  return setAccessFunction(access);
 }
 
 export function wrap(target, name, descriptor) {
-  const accessType = getAccessForMethod(target, name);
-  if (!accessType) {
-    return;
-  }
-
   descriptor.value = _.wrap(descriptor.value, async function wrapper(fn, ...args) {
-    const canAccess = await checkAccess(target, name, accessType);
-    if (!canAccess) {
-      throw new Forbidden();
+    const ctx = cls.getNamespace(`ctx`);
+
+    const accessType = getAccessTypeForMethod(target, name);
+
+    let accessFunction = getAccessFunctionForMethod(target, name);
+    if (!accessFunction) {
+      accessFunction = getAccessFunctionForClass(target);
     }
 
-    return await Reflect.apply(fn, this, args);
+    // allow by default
+    if (accessFunction) {
+      const access = await accessFunction(ctx.get(`user`), ctx.get(`Model`), ctx.get(`model`), name, accessType);
+      if (!access) {
+        throw new Forbidden();
+      }
+    }
+
+    return Reflect.apply(fn, this, args);
   });
-
-  return descriptor;
 }
 
-function setAccessForMethod(target, name, accessType) {
-  const accessTableForTarget = findOrCreateMap(accessTable, target);
-  const accessTableForMethod = findOrCreateMap(accessTableForTarget, name);
-  accessTableForMethod.set(isStatic(target), accessType);
+const accessTypeMap = new Map();
+
+function setAccessType(accessType) {
+  return function _setAccessType(target, name) {
+    const methodIsStatic = isStatic(target);
+    const key = methodIsStatic ? target : target.constructor;
+    const staticMap = findOrCreateMap(accessTypeMap, key);
+    const map = findOrCreateMap(staticMap, methodIsStatic);
+    map.set(name, accessType);
+  };
 }
 
-export function setAccessCallback(fn) {
-  accessCallback = fn;
-}
-
-export function getAccessForMethod(target, name) {
-  let t = target;
-  while (t !== (t && t.constructor)) {
-    const table = accessTable.get(t);
-    if (table) {
-      const accessTableForMethod = table.get(name);
-      if (accessTableForMethod) {
-
-        const access = accessTableForMethod.get(isStatic(target));
-        if (access) {
-
-          return access;
+function getAccessTypeForMethod(target, name) {
+  const methodIsStatic = isStatic(target);
+  let key = methodIsStatic ? target : target.constructor;
+  while (key !== (key && key.constructor)) {
+    const staticMap = accessTypeMap.get(key);
+    if (staticMap) {
+      const map = staticMap.get(methodIsStatic);
+      if (map) {
+        const accessType = map.get(name);
+        if (accessType) {
+          return accessType;
         }
       }
     }
-    t = Reflect.getPrototypeOf(t);
+
+    key = Reflect.getPrototypeOf(key);
+  }
+}
+
+function setAccessFunction(fn) {
+  return function _setAccessFunction(target, name, descriptor) {
+    if (name) {
+      return setAccessFunctionForMethod(fn, target, name, descriptor);
+    }
+
+    return setAccessFunctionForClass(fn, target);
+  };
+}
+
+const classAccessFunctionMap = new Map();
+
+function setAccessFunctionForClass(fn, target) {
+  classAccessFunctionMap.set(target, fn);
+}
+
+function getAccessFunctionForClass(target) {
+  return findTargetInMap(classAccessFunctionMap, target);
+}
+
+const methodAccessFunctionMap = new Map();
+
+function setAccessFunctionForMethod(fn, target, name) {
+  const classMap = findOrCreateMap(methodAccessFunctionMap, target);
+  classMap.set(name, fn);
+}
+
+function getAccessFunctionForMethod(target, name) {
+  const methodIsStatic = isStatic(target);
+  let key = methodIsStatic ? target : target.constructor;
+  while (key !== (key && key.constructor)) {
+    const classMap = methodAccessFunctionMap.get(key);
+    if (classMap) {
+      const fn = classMap.get(name);
+      if (fn) {
+        return fn;
+      }
+    }
+
+    key = Reflect.getPrototypeOf(key);
   }
 }

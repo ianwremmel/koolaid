@@ -1,7 +1,7 @@
 /* eslint no-unused-vars: [0] */
 import _ from 'lodash';
 import {NotFound} from './lib/http-error';
-import access from './decorators/access';
+import {default as access, create, destroy} from './decorators/access';
 import method from './decorators/method';
 import param from './decorators/param';
 

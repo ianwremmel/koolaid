@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {HttpError, resource, RestModel} from '../../../..';
+import {access, HttpError, resource, RestModel} from '../../../..';
 import uuid from 'uuid';
 
 const {BadRequest, Conflict, NotFound} = HttpError;
@@ -7,6 +7,20 @@ const {BadRequest, Conflict, NotFound} = HttpError;
 let models = {};
 
 @resource({basePath: `naive-model`})
+@access((user, Model, model, methodName, accessType) => {
+  /* eslint max-params: [0] */
+  if (!user) {
+    return !model && accessType === `read`;
+  }
+
+  if (!model) {
+    return true;
+  }
+
+  if (model) {
+    return accessType === `read` || model.creator === user.id;
+  }
+})
 export default class NaiveModel extends RestModel {
   isNew(ctx) {
     return ctx.get(`isNew`);
@@ -17,9 +31,8 @@ export default class NaiveModel extends RestModel {
       throw new Conflict(`A NaiveModel with id ${data.id} already exists.`);
     }
 
-    if (!data.id) {
-      data.id = uuid.v4();
-    }
+    data.id = data.id || uuid.v4();
+    data.creator = data.creator || ctx.get(`user`).id;
 
     models[data.id] = data;
     ctx.set(`isNew`, true);
