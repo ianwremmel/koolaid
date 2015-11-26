@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import assert from 'assert';
 import cls from 'continuation-local-storage';
-import {configure as configureAccess} from './decorators/access';
 import express from 'express';
 import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
 import {middleware as httpErrorHandler, NotFound} from './lib/http-error';
