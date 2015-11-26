@@ -23,10 +23,6 @@ export default function router(options) {
     throw new Error(`\`options.models\` is required`);
   }
 
-  if (options.access) {
-    configureAccess(options.access);
-  }
-
   const context = options.context;
   const models = requireDir(options.models);
   const ctx = cls.createNamespace(`ctx`);

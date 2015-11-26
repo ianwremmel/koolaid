@@ -20,11 +20,7 @@ app.use((req, res, next) => {
 });
 
 app.use(koolaid({
-  models: path.join(__dirname, `models`),
-  access: {
-    acls: path.join(__dirname, `acls`),
-    backend: `memory`
-  }
+  models: path.join(__dirname, `models`)
 }));
 
 app.use(errorhandler());
