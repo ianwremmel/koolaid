@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "syntax-decorators",
+    "syntax-async-functions",
+    "transform-decorators",
+    "transform-es2015-modules-commonjs"
+  ],
+  "presets": ["es2015"]
+}
