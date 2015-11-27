@@ -176,7 +176,6 @@ export default function gruntConfig(grunt) {
     if (grunt.option(`coverage`)) {
       tasks.push(`storeCoverage`);
       tasks.push(`makeReport`);
-      tasks.push(`coveralls`);
     }
 
     grunt.task.run(tasks);

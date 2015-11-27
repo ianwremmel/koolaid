@@ -7,3 +7,4 @@ node_js:
 after_script:
   - npm install -g codeclimate-test-reporter
   - codeclimate-test-reporter < ./reports/coverage/all/lcov.info
+  - grunt coveralls
