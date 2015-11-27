@@ -46,5 +46,19 @@ describe(`Models`, () => {
         })
         .expect(200));
     });
+
+    describe(`per-method access control`, () => {
+      it(`prevents non-admins from counting all instances`, () => request(app)
+        .get(`/naive-model/count-all`)
+        .set(`Authorization`, `Basic 2`)
+        .expect(403));
+
+      it(`allows admins to count all instances`, () => request(app)
+        .get(`/naive-model/count-all`)
+        .set(`Authorization`, `Basic Admin`)
+        .expect(200));
+    });
+
+
   });
 });

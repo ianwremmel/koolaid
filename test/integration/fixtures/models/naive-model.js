@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {access, HttpError, resource, RestModel} from '../../../..';
+import {access, HttpError, method, resource, RestModel} from '../../../..';
 import uuid from 'uuid';
 
 const {BadRequest, Conflict, NotFound} = HttpError;
@@ -110,6 +110,16 @@ export default class NaiveModel extends RestModel {
       models[model.id] = Object.assign(model, body);
       return models;
     }, models);
+  }
+
+  @method({path: `/count-all`, verb: `GET`})
+  @access((user) => {
+    return user.id === `Admin`;
+  })
+  static countAll() {
+    return {
+      count: Object.keys(models).length
+    };
   }
 
   destroy(ctx) {
