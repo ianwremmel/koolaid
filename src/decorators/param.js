@@ -1,3 +1,4 @@
+import assert from 'assert';
 import _ from 'lodash';
 import {BadRequest} from '../lib/http-error';
 import {getCurrentMethod, getRoutingTable} from '../lib/routing-table';
@@ -6,9 +7,7 @@ import isStatic from '../lib/is-static';
 export default function param(options) {
   options = options || {};
 
-  if (!options.source) {
-    throw new Error(`\`options.source\` is required`);
-  }
+  assert(options.source, `\`options.source\` is required`);
 
   return function _param(target, name) {
     const method = getCurrentMethod(target, name);

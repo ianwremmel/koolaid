@@ -1,3 +1,4 @@
+import assert from 'assert';
 import _ from 'lodash';
 import cls from 'continuation-local-storage';
 import {getTableForModel} from '../lib/routing-table';
@@ -7,9 +8,7 @@ import {wrap as param} from './param';
 export default function resource(options) {
   options = options || {};
 
-  if (!options.basePath) {
-    throw new Error(`\`options.basePath\` is required`);
-  }
+  assert(options.basePath, `\`options.basePath\` is required`);
 
   return function _resource(target) {
     const table = getTableForModel(target);

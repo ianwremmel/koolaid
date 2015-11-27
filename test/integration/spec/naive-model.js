@@ -249,8 +249,8 @@ describe(`Models`, () => {
                     return done(err);
                   }
 
-                  assert(res.body.length === 1);
-                  assert(res.body[0].extraData === 1);
+                  assert.lengthOf(res.body, 1);
+                  assert.equal(res.body[0].extraData, 1);
                   done();
                 });
             });

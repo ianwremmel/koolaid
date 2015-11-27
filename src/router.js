@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import assert from 'assert';
+import _ from 'lodash';
 import cls from 'continuation-local-storage';
 import express from 'express';
 import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
@@ -18,9 +18,7 @@ import shimmer from 'shimmer';
  * @returns {express.Router} Router that will handle all koolaid requests.
  */
 export default function router(options) {
-  if (!options.models) {
-    throw new Error(`\`options.models\` is required`);
-  }
+  assert(options.models, `\`options.models\` is required`);
 
   const context = options.context;
   const models = requireDir(options.models);
@@ -71,10 +69,8 @@ export default function router(options) {
     const idParam = routingTable.idParam;
 
     router.use(`/${routingTable.basePath}`, (req, res, next) => {
-      if (ctx.get(`Model`)) {
-        throw new Error(`\`ctx.Model\` cannot be set twice`);
-      }
       ctx.run(() => {
+        assert(!ctx.get(`Model`), `\`ctx.Model\` cannot be set twice`);
         ctx.set(`Model`, target);
         next();
       });
