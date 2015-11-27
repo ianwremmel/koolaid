@@ -185,4 +185,6 @@ export default function gruntConfig(grunt) {
     `clean:doc`,
     `shell:doc`
   ]);
+
+  grunt.registerTask(`default`, `test`);
 }
