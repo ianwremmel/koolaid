@@ -23,6 +23,7 @@ export default function router(options) {
   const context = options.context;
   const models = requireDir(options.models);
   const ctx = cls.createNamespace(`ctx`);
+  ctx.set(`logger`, console);
 
   function bind(fn) {
     if (fn) {
@@ -45,7 +46,7 @@ export default function router(options) {
       ctx.set(`req`, req);
       ctx.set(`res`, res);
       if (_.isFunction(context)) {
-        context(ctx, req);
+        context(ctx);
       }
       next();
     });
@@ -105,7 +106,8 @@ export default function router(options) {
             .catch(next);
 
           /**
-           * Executes the appropriate method for the identified RespoModel
+           * Executes the appropriate method for the identified model
+           * @private
            * @returns {Promise} Resolves on completion
            */
           function executeRequest() {
@@ -126,6 +128,7 @@ export default function router(options) {
           /**
            * invokes `after()` if specified
            * @param {Object} result the result of the request
+           * @private
            * @returns {Object} returns `result`
            */
           function postProcess(result) {
@@ -138,6 +141,7 @@ export default function router(options) {
           /**
            * Determines the HTTP response code for `res`
            * @param {Object} result the result of the request
+           * @private
            * @returns {Object} returns `result`
            */
           async function setResponseStatusCode(result) {
@@ -162,6 +166,7 @@ export default function router(options) {
           /**
            * Sets the HTTP response body for `res`
            * @param {Object} result the result of the request
+           * @private
            * @returns {Object} returns `result`
            */
           function setResponseBody(result) {

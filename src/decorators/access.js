@@ -4,7 +4,34 @@ import {findOrCreateMap, findTargetInMap} from '../lib/map';
 import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
 
-export default function decorate(access) {
+/**
+ * Use to specify an access control function for the specified class or method
+ * @name ATSIGNaccess
+ * @function
+ * @example
+ * ATSIGNaccess((user) => {
+ *   return !!user;
+ * })
+ * class MyModel {
+ *   ATSIGNaccess(`write`)
+ *   static create() {
+ *     return new MyModel();
+ *   }
+ *
+ *   ATSIGNaccess((user) => {
+ *     return user.isAdmin();
+ *   })
+ *   destroy() {
+ *     return db.destroy(this);
+ *   }
+ * }
+ * @param {string|accessCallback} access if string, the type
+ * required to interact with the resource (typically one of "read", "write", or
+ * "exectute". If function, indicates whether or not the current user may
+ * execute the specified action.
+ * @returns {undefined}
+ */
+export default function access(access) {
   if (_.isString(access)) {
     return setAccessType(access);
   }
@@ -108,3 +135,16 @@ function getAccessFunctionForMethod(target, name) {
     key = Reflect.getPrototypeOf(key);
   }
 }
+
+/**
+ * Invoked to determine if the current method is allowed to be executed
+ * @callback accessCallback
+ * @param {User} user The current user
+ * @param {Class} Model The {@link ATSIGNresource} type with which the user
+ * would like to interact.
+ * @param {Model} model the instance of Model
+ * @param {string} methodName the name of the method being called
+ * @param {string} accessType The access type required to interact with the
+ * decorated resource. Typically, this will be one of "read", "write", or
+ * "execute"
+ */
