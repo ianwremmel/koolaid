@@ -107,15 +107,15 @@ describe(`Models`, () => {
               .get(`/naive-model`)
               .set(`Authorization`, `Basic 14`)
               .expect(200, [{
-                creator: `Basic 14`,
+                creator: `14`,
                 id: id1,
                 extraData: 5
               }, {
-                creator: `Basic 14`,
+                creator: `14`,
                 id: id2,
                 extraData: 5
               }, {
-                creator: `Basic 14`,
+                creator: `14`,
                 id: id3,
                 extraData: 5
               }])
@@ -145,15 +145,15 @@ describe(`Models`, () => {
               .get(`/naive-model`)
               .set(`Authorization`, `Basic 14`)
               .expect(200, [{
-                creator: `Basic 14`,
+                creator: `14`,
                 id: id1,
                 extraData: 0
               }, {
-                creator: `Basic 14`,
+                creator: `14`,
                 id: id2,
                 extraData: 1
               }, {
-                creator: `Basic 14`,
+                creator: `14`,
                 id: id3,
                 extraData: 5
               }])
@@ -187,11 +187,11 @@ describe(`Models`, () => {
         .get(`/naive-model`)
         .set(`Authorization`, `Basic 14`)
         .expect(200, [{
-          creator: `Basic 14`,
+          creator: `14`,
           id: id1,
           extraData: 1
         }, {
-          creator: `Basic 14`,
+          creator: `14`,
           id: id2,
           extraData: 2
         }]));
@@ -200,7 +200,7 @@ describe(`Models`, () => {
         .get(`/naive-model?filter[where][extraData]=2`)
         .set(`Authorization`, `Basic 14`)
         .expect(200, [{
-          creator: `Basic 14`,
+          creator: `14`,
           id: id2,
           extraData: 2
         }]));
@@ -249,8 +249,8 @@ describe(`Models`, () => {
                     return done(err);
                   }
 
-                  assert(res.body.length === 1);
-                  assert(res.body[0].extraData === 1);
+                  assert.lengthOf(res.body, 1);
+                  assert.equal(res.body[0].extraData, 1);
                   done();
                 });
             });
@@ -342,7 +342,7 @@ describe(`Models`, () => {
           .get(`/naive-model/${id}`)
           .set(`Authorization`, `Basic 14`)
           .expect(200, {
-            creator: `Basic 14`,
+            creator: `14`,
             id
           }));
 
@@ -365,7 +365,7 @@ describe(`Models`, () => {
           .post(`/naive-model`)
           .set(`Authorization`, `Basic 14`)
           .send({
-            creator: `Basic 14`,
+            creator: `14`,
             id,
             extraData: 1
           })
@@ -376,12 +376,12 @@ describe(`Models`, () => {
         .put(`/naive-model/${id}`)
         .set(`Authorization`, `Basic 14`)
         .send({
-          creator: `Basic 14`,
+          creator: `14`,
           id,
           extraData: 2
         })
         .expect(200, {
-          creator: `Basic 14`,
+          creator: `14`,
           id,
           extraData: 2
         }));

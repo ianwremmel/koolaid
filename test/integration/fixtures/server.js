@@ -12,7 +12,7 @@ app.use(bodyParser());
 app.use((req, res, next) => {
   if (req.headers.authorization) {
     req.user = {
-      id: req.headers.authorization
+      id: req.headers.authorization.split(` `).pop()
     };
   }
 
