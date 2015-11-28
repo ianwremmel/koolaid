@@ -23,7 +23,6 @@ export default function router(options) {
   const context = options.context;
   const models = requireDir(options.models);
   const ctx = cls.createNamespace(`ctx`);
-  ctx.set(`logger`, console);
 
   function bind(fn) {
     if (fn) {
@@ -45,6 +44,7 @@ export default function router(options) {
       ctx.set(`user`, req.user);
       ctx.set(`req`, req);
       ctx.set(`res`, res);
+      ctx.set(`logger`, console);
       if (_.isFunction(context)) {
         context(ctx);
       }
