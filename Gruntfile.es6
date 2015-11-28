@@ -98,7 +98,7 @@ export default function gruntConfig(grunt) {
 
     shell: {
       doc: {
-        command: `./node_modules/.bin/documentation -f html -o <%= config.doc %>`
+        command: `./node_modules/.bin/documentation -g -f html -o <%= config.doc %>`
       }
     },
 

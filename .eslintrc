@@ -426,8 +426,8 @@
       - prefer:
           return: returns
         requireParamDescription: true
-        requireReturn: true
-        requireReturnDescription: true
+        requireReturn: false
+        requireReturnDescription: false
     valid-typeof:
       - 2
     vars-on-top:

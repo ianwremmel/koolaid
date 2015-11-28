@@ -5,6 +5,16 @@ import {getTableForModel} from '../lib/routing-table';
 import {wrap as access} from './access';
 import {wrap as param} from './param';
 
+/**
+ * @name ATSIGNresource
+ * @function
+ * @param {Object} options Options object
+ * @param {string} options.basePath The path at which to route the resource. All
+ * of the resource's {@link method}s will be relative to this path.
+ * @param {string} options.idParam The name of the resource property to search for
+ * when looking up the model based on a route parak
+ * @returns {undefined}
+ */
 export default function resource(options) {
   options = options || {};
 
