@@ -25,9 +25,7 @@ export default function resource(options) {
     table.basePath = options.basePath;
     table.idParam = options.idParam || `id`;
 
-    if (!target.$hasContext) {
-      contextualize(target, target);
-    }
+    contextualize(target, target);
   };
 }
 
