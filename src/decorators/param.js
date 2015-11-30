@@ -1,8 +1,8 @@
 import assert from 'assert';
-import _ from 'lodash';
 import {BadRequest} from '../lib/http-error';
 import {getCurrentMethod, getRoutingTable} from '../lib/routing-table';
 import isStatic from '../lib/is-static';
+import lodashWrap from 'lodash.wrap';
 
 /**
  * Use in conjuction with {@link ATSIGNmethod} to specify how methods get their
@@ -34,7 +34,7 @@ export default function param(options) {
 }
 
 export function wrap(target, name, descriptor) {
-  descriptor.value = _.wrap(descriptor.value, function wrapper(fn, ...args) {
+  descriptor.value = lodashWrap(descriptor.value, function wrapper(fn, ...args) {
     const method = getRoutingTable(target).methods[name];
     if (method) {
       const params = method[isStatic(target, name)][0].params;

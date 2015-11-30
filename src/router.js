@@ -1,5 +1,7 @@
 import assert from 'assert';
-import _ from 'lodash';
+import find from 'lodash.find';
+import get from 'lodash.get';
+import sortByOrder from 'lodash.sortbyorder';
 import cls from 'continuation-local-storage';
 import express from 'express';
 import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
@@ -45,7 +47,7 @@ export default function router(options) {
       ctx.set(`req`, req);
       ctx.set(`res`, res);
       ctx.set(`logger`, console);
-      if (_.isFunction(context)) {
+      if (typeof context === `function`) {
         context(ctx);
       }
       next();
@@ -82,10 +84,8 @@ export default function router(options) {
     // look like :id`s (e.g. /model/count needs to be mounted before /model/id).
     // Then, HEAD needs to come before GET because, aparently, express treats
     // GET as HEAD.
-    router = _(flatRoutingTable)
-      .sortByOrder([`isStatic`, `verb`], [`asc`, `asc`])
+    router = sortByOrder(flatRoutingTable, [`isStatic`, `verb`], [`asc`, `asc`])
       .reverse()
-      .values()
       .reduce((router, row) => {
         const {
           after,
@@ -116,7 +116,7 @@ export default function router(options) {
               if (params) {
                 args = params.reduce((rargs, rparam) => {
                   const source = req[rparam.source];
-                  rargs.push(rparam.name ? _.get(source, rparam.name) : source);
+                  rargs.push(rparam.name ? get(source, rparam.name) : source);
                   return rargs;
                 }, args);
               }
@@ -194,7 +194,7 @@ export default function router(options) {
               path: req.route.path
             };
 
-            const row = _.find(flatRoutingTable, (r) => r.verb === query.verb && r.path === query.path);
+            const row = find(flatRoutingTable, (r) => r.verb === query.verb && r.path === query.path);
             // Don't fail for static methods - they should work without a
             // model
             if (row.isStatic) {
