@@ -21,3 +21,4 @@ doc
 node_modules
 npm-debug.log
 reports
+dist
