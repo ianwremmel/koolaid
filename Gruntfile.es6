@@ -14,25 +14,7 @@ export default function gruntConfig(grunt) {
   timeGrunt(grunt);
 
   grunt.initConfig({
-    babel: {
-      options: {
-        optional: `runtime`,
-        sourceMap: true
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: `<%= config.src %>`,
-          src: `**/*.js`,
-          dest: `<%= config.dist %>`
-        }]
-      }
-    },
-
     clean: {
-      dist: {
-        src: `<%= config.dist %>`
-      },
       doc: {
         src: `<%= config.doc %>`
       },
@@ -45,7 +27,6 @@ export default function gruntConfig(grunt) {
     },
 
     config: {
-      dist: `dist`,
       doc: `doc`,
       reports: `reports`,
       src: `src`,
@@ -178,11 +159,6 @@ export default function gruntConfig(grunt) {
       grunt.config(`mochaTest`, mochaTest);
     }
   }
-
-  grunt.registerTask(`build`, [
-    `clean`,
-    `babel:dist`
-  ]);
 
   grunt.registerTask(`test`, () => {
     const tasks = [
