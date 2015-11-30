@@ -1,8 +1,8 @@
 import cls from 'continuation-local-storage';
-import _ from 'lodash';
 import {findOrCreateMap, findTargetInMap} from '../lib/map';
 import {Forbidden} from '../lib/http-error';
 import isStatic from '../lib/is-static';
+import lodashWrap from 'lodash.wrap';
 
 /**
  * Use to specify an access control function for the specified class or method
@@ -32,7 +32,7 @@ import isStatic from '../lib/is-static';
  * @returns {undefined}
  */
 export default function access(access) {
-  if (_.isString(access)) {
+  if (typeof access === `string`) {
     return setAccessType(access);
   }
 
@@ -40,7 +40,7 @@ export default function access(access) {
 }
 
 export function wrap(target, name, descriptor) {
-  descriptor.value = _.wrap(descriptor.value, async function wrapper(fn, ...args) {
+  descriptor.value = lodashWrap(descriptor.value, async function wrapper(fn, ...args) {
     const ctx = cls.getNamespace(`ctx`);
 
     const accessType = getAccessTypeForMethod(target, name);

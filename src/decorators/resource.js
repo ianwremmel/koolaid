@@ -1,5 +1,5 @@
 import assert from 'assert';
-import _ from 'lodash';
+import lodashWrap from 'lodash.wrap';
 import cls from 'continuation-local-storage';
 import {getTableForModel} from '../lib/routing-table';
 import {wrap as access} from './access';
@@ -55,7 +55,7 @@ function contextualizeObject(obj, target) {
   // prefer-reflect here.
   /* eslint prefer-reflect: [0] */
   Object.getOwnPropertyNames(obj).forEach((name) => {
-    if (!_.contains([`constructor`, `prototype`, `length`], name)) {
+    if (![`constructor`, `prototype`, `length`].includes(name)) {
       contextualizeMethod(obj, name, target);
     }
   });
@@ -66,7 +66,7 @@ function contextualizeMethod(obj, name, target) {
   if (typeof descriptor.value === `function` && (!target[name] || obj[name] === target[name])) {
 
     // Reminder: wrappers are executed bottom to top.
-    descriptor.value = _.wrap(descriptor.value, function wrapper(fn, ...args) {
+    descriptor.value = lodashWrap(descriptor.value, function wrapper(fn, ...args) {
       const ctx = cls.getNamespace(`ctx`);
       args.push(typeof ctx === `function` ? ctx() : ctx);
       return Reflect.apply(fn, this, args);
@@ -76,7 +76,7 @@ function contextualizeMethod(obj, name, target) {
     access(target, name, descriptor);
 
     // Guarantee that all methods return a Promise
-    descriptor.value = _.wrap(descriptor.value, async function wrapper(fn, ...args) {
+    descriptor.value = lodashWrap(descriptor.value, async function wrapper(fn, ...args) {
       return await Reflect.apply(fn, this, args);
     });
 

@@ -1,4 +1,7 @@
-import _ from 'lodash';
+import pick from 'lodash.pick';
+import pluck from 'lodash.pluck';
+import remove from 'lodash.remove';
+import where from 'lodash.where';
 import {access, HttpError, method, resource, RestModel} from '../../../..';
 import uuid from 'uuid';
 
@@ -41,10 +44,7 @@ export default class NaiveModel extends RestModel {
 
   static destroy(filter) {
     if (filter && filter.where) {
-      _(models)
-        .values()
-        .remove(filter.where)
-        .pluck(`id`)
+      pluck(remove(Object.values(models), filter.where), `id`)
         .reduce((models, id) => {
           Reflect.deleteProperty(models, id);
           return models;
@@ -57,19 +57,14 @@ export default class NaiveModel extends RestModel {
 
   static find(filter, ctx) {
     if (!filter) {
-      return _(models)
-        .values()
-        .filter()
-        .value();
+      return Object.values(models)
+        .filter((value) => Boolean(value));
     }
 
-    return _(models)
-      // Aparently, _.where doesn`t work correctly on Objects
-      .values()
-      .where(filter.where)
+    // Aparently, _.where doesn`t work correctly on Objects
+    return where(Object.values(models), filter.where)
       .map((data) => new (ctx.get(`Model`))(data))
-      .filter()
-      .value();
+      .filter((value) => Boolean(value));
   }
 
   static async findById(id, ctx) {
@@ -134,7 +129,7 @@ export default class NaiveModel extends RestModel {
 
     Object.assign(this, body);
 
-    Object.assign(_(models[this.id]).pick(`id`, `extraData`), body);
+    Object.assign(pick(models[this.id], `id`, `extraData`), body);
     return this;
   }
 }
