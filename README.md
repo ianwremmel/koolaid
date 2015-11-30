@@ -239,4 +239,6 @@ Optionally, you can also pass in a `context()` function to add extra data to eac
 
 ## Caveats
 
-Koolaid is a collection of [es7 decorators](https://github.com/wycats/javascript-decorators), which means your app needs to support es7 decorators and decorators are still a very early spec. So early, in fact, that due to pending changes, they're only supported in Babel 5.x and not 6.x. For the time being, koolaid automatically injects the babel 5 require hook, so, in theory, you won't need to figure out babel, but every file you include after koolaid will be run through the babel compiler at runtime.
+Koolaid is a collection of [es7 decorators](https://github.com/wycats/javascript-decorators), which means your app needs to support es7 decorators and decorators are still a very early spec. So early, in fact, that due to pending changes, they're only supported in Babel 5.x and not 6.x.
+
+You must (a) enable the babel option "es7.decorators" and (b) make sure you're using babel 5.x.
