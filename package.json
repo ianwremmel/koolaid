@@ -39,7 +39,7 @@
     "uuid": "^2.0.1"
   },
   "dependencies": {
-    "babel": "^5.8.29",
+    "babel": "^6.3.26",
     "continuation-local-storage": "^3.1.4",
     "extend-error": "git://github.com/ianwremmel/extend-error.git",
     "lodash.find": "^3.2.1",
