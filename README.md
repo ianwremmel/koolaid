@@ -236,17 +236,3 @@ app.use(koolaid({
 The only required property is `models` which is a path to a directory containing your model definitions. `path.join` is probably the easiest way to make sure the path resolves, but as longs as it's a path that can be found by [requireDir](https://www.npmjs.com/package/require-dir), it'll work.
 
 Optionally, you can also pass in a `context()` function to add extra data to each invocation.
-
-## Caveats
-
-Koolaid is a collection of [es7 decorators](https://github.com/wycats/javascript-decorators), which means your app needs to support es7 decorators and decorators are still a very early spec. So early, in fact, that due to pending changes, they're only supported in Babel 5.x and not 6.x.
-
-You must (a) enable the babel option "es7.decorators" and (b) make sure you're using babel 5.x.
-
-So far, it looks like you *must* use the babel require hook as follows in order to ensure koolaid gets transpiled without impacting your other node modules. This assumes you have `src` and `test` directories.
-
-```JavaScript
-require('babel/register')({
-  only: /(?:node_modules.*?koolaid\/src)|(?:src)|(?:test)/
-});
-```

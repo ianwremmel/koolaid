@@ -1,4 +1,4 @@
-import {access, method, resource} from '../../../..';
+import {access, method, resource} from '../../../../src';
 
 @resource({basePath: `ping`})
 export default class Ping {

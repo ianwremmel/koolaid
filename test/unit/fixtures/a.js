@@ -1,4 +1,4 @@
-import {access, method, param, resource} from '../../..';
+import {access, method, param, resource} from '../../../src';
 
 @resource({basePath: `a`})
 export default class A {

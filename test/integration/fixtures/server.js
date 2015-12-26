@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
 import express from 'express';
-import koolaid from '../../..';
+import koolaid from '../../../src';
 import morgan from 'morgan';
 import path from 'path';
 
