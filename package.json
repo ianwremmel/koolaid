@@ -1,6 +1,6 @@
 {
   "name": "@ianwremmel/koolaid",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "RESTful modeling framework for express that drank all the es6+ koolaid",
   "main": "dist/index.js",
   "scripts": {
