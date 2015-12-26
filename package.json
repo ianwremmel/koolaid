@@ -32,7 +32,7 @@
     "grunt-istanbul": "^0.6.1",
     "grunt-mocha-test": "^0.12.7",
     "grunt-shell": "^1.1.2",
-    "isparta": "^3.5.3",
+    "isparta": "^4.0.0",
     "load-grunt-tasks": "^3.4.0",
     "mocha": "^2.3.4",
     "morgan": "^1.6.1",
