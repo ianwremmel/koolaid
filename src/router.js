@@ -55,7 +55,9 @@ export default function router(options) {
   });
 
   Object.keys(models).reduce((router, modelName) => {
-    const model = models[modelName];
+    // try default because of es6 modules
+    const model = models[modelName].default || models[modelName];
+
     router.use(mount(model));
     return router;
   }, router);
@@ -144,17 +146,23 @@ export default function router(options) {
            * @private
            * @returns {Object} returns `result`
            */
-          async function setResponseStatusCode(result) {
+          function setResponseStatusCode(result) {
             if (!result) {
               res.status(204);
             }
             else if (result instanceof target) {
-              if (await result.isNew()) {
-                res.status(201);
-              }
-              else {
-                res.status(200);
-              }
+              // Note: At time of implementation, async/await made this function
+              // non-referencable.
+              return result.isNew()
+                .then((isNew) => {
+                  if (isNew) {
+                    res.status(201);
+                  }
+                  else {
+                    res.status(200);
+                  }
+                  return result;
+                });
             }
             else {
               res.status(200);

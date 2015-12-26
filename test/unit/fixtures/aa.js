@@ -1,4 +1,4 @@
-import {access, method, resource} from '../.././..';
+import {access, method, resource} from '../../..';
 import A from './a';
 
 @resource({basePath: `aa`})

@@ -1,5 +1,8 @@
-/* eslint-disable */
-// The docs say not to do this, but koolaid is completely useless without es7
-// decorators, so I don't see much of an issue.
-require('babel-core/register');
-module.exports = require('./koolaid');
+import 'babel-polyfill';
+export {default as access} from './decorators/access';
+export {default as method} from './decorators/method';
+export {default as param} from './decorators/param';
+export {default as resource} from './decorators/resource';
+export {default as RestModel} from './rest-model';
+import router from './router';
+export default router;
