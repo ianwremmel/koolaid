@@ -4,7 +4,9 @@ const HttpError = extendError({
   subTypeName: `HttpError`
 });
 
-function middleware() {
+export default HttpError;
+
+export function middleware() {
   return function handler(err, req, res, next) {
     if (!(err instanceof HttpError)) {
       return next(err);
@@ -19,201 +21,170 @@ function middleware() {
   };
 }
 
-const BadRequest = extendError(HttpError, {
+export const BadRequest = extendError(HttpError, {
   subTypeName: `BadRequest`,
   properties: {
     code: 400
   }
 });
 
-const Unauthorized = extendError(BadRequest, {
+export const Unauthorized = extendError(BadRequest, {
   subTypeName: `Unauthorized`,
   properties: {
     code: 401
   }
 });
 
-const PaymentRequired = extendError(BadRequest, {
+export const PaymentRequired = extendError(BadRequest, {
   subTypeName: `PaymentRequired`,
   properties: {
     code: 402
   }
 });
 
-const Forbidden = extendError(BadRequest, {
+export const Forbidden = extendError(BadRequest, {
   subTypeName: `Forbidden`,
   properties: {
     code: 403
   }
 });
 
-const NotFound = extendError(BadRequest, {
+export const NotFound = extendError(BadRequest, {
   subTypeName: `NotFound`,
   properties: {
     code: 404
   }
 });
 
-const MethodNotAllowed = extendError(BadRequest, {
+export const MethodNotAllowed = extendError(BadRequest, {
   subTypeName: `MethodNotAllowed`,
   properties: {
     code: 405
   }
 });
 
-const NotAcceptable = extendError(BadRequest, {
+export const NotAcceptable = extendError(BadRequest, {
   subTypeName: `NotAcceptable`,
   properties: {
     code: 406
   }
 });
 
-const ProxyAuthenticationRequired = extendError(BadRequest, {
+export const ProxyAuthenticationRequired = extendError(BadRequest, {
   subTypeName: `ProxyAuthenticationRequired`,
   properties: {
     code: 407
   }
 });
 
-const RequestTimeout = extendError(BadRequest, {
+export const RequestTimeout = extendError(BadRequest, {
   subTypeName: `RequestTimeout`,
   properties: {
     code: 408
   }
 });
 
-const Conflict = extendError(BadRequest, {
+export const Conflict = extendError(BadRequest, {
   subTypeName: `Conflict`,
   properties: {
     code: 409
   }
 });
 
-const Gone = extendError(BadRequest, {
+export const Gone = extendError(BadRequest, {
   subTypeName: `Gone`,
   properties: {
     code: 410
   }
 });
 
-const LengthRequired = extendError(BadRequest, {
+export const LengthRequired = extendError(BadRequest, {
   subTypeName: `LengthRequired`,
   properties: {
     code: 411
   }
 });
 
-const PreconditionFailed = extendError(BadRequest, {
+export const PreconditionFailed = extendError(BadRequest, {
   subTypeName: `PreconditionFailed`,
   properties: {
     code: 412
   }
 });
 
-const RequestEntityTooLarge = extendError(BadRequest, {
+export const RequestEntityTooLarge = extendError(BadRequest, {
   subTypeName: `RequestEntityTooLarge`,
   properties: {
     code: 413
   }
 });
 
-const RequestUriTooLong = extendError(BadRequest, {
+export const RequestUriTooLong = extendError(BadRequest, {
   subTypeName: `RequestUriTooLong`,
   properties: {
     code: 414
   }
 });
 
-const UnsupportedMediaType = extendError(BadRequest, {
+export const UnsupportedMediaType = extendError(BadRequest, {
   subTypeName: `UnsupportedMediaType`,
   properties: {
     code: 415
   }
 });
 
-const RequestRangeNotSatisfiable = extendError(BadRequest, {
+export const RequestRangeNotSatisfiable = extendError(BadRequest, {
   subTypeName: `RequestRangeNotSatisfiable`,
   properties: {
     code: 416
   }
 });
 
-const ExpectationFailed = extendError(BadRequest, {
+export const ExpectationFailed = extendError(BadRequest, {
   subTypeName: `ExpectationFailed`,
   properties: {
     code: 417
   }
 });
 
-const InternalServerError = extendError(HttpError, {
+export const InternalServerError = extendError(HttpError, {
   subTypeName: `InternalServerError`,
   properties: {
     code: 500
   }
 });
 
-const NotImplemented = extendError(InternalServerError, {
+export const NotImplemented = extendError(InternalServerError, {
   subTypeName: `NotImplemented`,
   properties: {
     code: 501
   }
 });
 
-const BadGateway = extendError(InternalServerError, {
+export const BadGateway = extendError(InternalServerError, {
   subTypeName: `BadGateway`,
   properties: {
     code: 502
   }
 });
 
-const ServiceUnavailable = extendError(InternalServerError, {
+export const ServiceUnavailable = extendError(InternalServerError, {
   subTypeName: `ServiceUnavailable`,
   properties: {
     code: 503
   }
 });
 
-const GatewayTimeout = extendError(InternalServerError, {
+export const GatewayTimeout = extendError(InternalServerError, {
   subTypeName: `GatewayTimeout`,
   properties: {
     code: 504
   }
 });
 
-const HttpVersionNotSupported = extendError(InternalServerError, {
+export const HttpVersionNotSupported = extendError(InternalServerError, {
   subTypeName: `HttpVersionNotSupported`,
   properties: {
     code: 505
   }
 });
-
-Object.assign(HttpError, {
-  middleware,
-
-  BadRequest,
-  Unauthorized,
-  PaymentRequired,
-  Forbidden,
-  NotFound,
-  MethodNotAllowed,
-  NotAcceptable,
-  ProxyAuthenticationRequired,
-  RequestTimeout,
-  Conflict,
-  Gone,
-  LengthRequired,
-  PreconditionFailed,
-  RequestEntityTooLarge,
-  RequestUriTooLong,
-  UnsupportedMediaType,
-  RequestRangeNotSatisfiable,
-  ExpectationFailed,
-  InternalServerError,
-  NotImplemented,
-  BadGateway,
-  ServiceUnavailable,
-  GatewayTimeout,
-  HttpVersionNotSupported
-});
-
-export default HttpError;

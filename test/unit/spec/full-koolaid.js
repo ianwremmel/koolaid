@@ -101,10 +101,10 @@ describe(`koolaid`, () => {
       it(`produces the correct routing table for a resource`, () => {
         assert.deepEqual(getFlatRoutingTable(A), [{
           after: undefined,
-          verb: `put`,
-          path: `/a/:id`,
-          methodName: `update`,
-          isStatic: false,
+          verb: `post`,
+          path: `/a/`,
+          methodName: `create`,
+          isStatic: true,
           params: [
             {source: `body`}
           ]
@@ -123,10 +123,10 @@ describe(`koolaid`, () => {
           ]
         }, {
           after: undefined,
-          verb: `post`,
-          path: `/a/`,
-          methodName: `create`,
-          isStatic: true,
+          verb: `put`,
+          path: `/a/:id`,
+          methodName: `update`,
+          isStatic: false,
           params: [
             {source: `body`}
           ]

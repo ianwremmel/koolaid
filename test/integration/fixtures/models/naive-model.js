@@ -2,10 +2,9 @@ import pick from 'lodash.pick';
 import pluck from 'lodash.pluck';
 import remove from 'lodash.remove';
 import where from 'lodash.where';
-import {access, HttpError, method, resource, RestModel} from '../../../..';
 import uuid from 'uuid';
-
-const {BadRequest, Conflict, NotFound} = HttpError;
+import {access, method, resource, RestModel} from '../../../../src';
+import {BadRequest, Conflict, NotFound} from '../../../../src/http-error';
 
 let models = {};
 
