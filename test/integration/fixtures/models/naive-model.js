@@ -4,7 +4,7 @@ import remove from 'lodash.remove';
 import where from 'lodash.where';
 import uuid from 'uuid';
 import {access, method, resource, RestModel} from '../../../../src';
-import {BadRequest, Conflict, NotFound} from '../../../../src/lib/http-error';
+import {BadRequest, Conflict, NotFound} from '../../../../src/http-error';
 
 let models = {};
 

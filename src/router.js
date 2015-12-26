@@ -5,7 +5,7 @@ import sortByOrder from 'lodash.sortbyorder';
 import cls from 'continuation-local-storage';
 import express from 'express';
 import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
-import {middleware as httpErrorHandler, NotFound} from './lib/http-error';
+import {middleware as httpErrorHandler, NotFound} from './http-error';
 import queryStringNumbers from './lib/query-string-numbers';
 import requireDir from 'require-dir';
 import shimmer from 'shimmer';

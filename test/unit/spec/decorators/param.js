@@ -1,7 +1,7 @@
 import A from '../../fixtures/a';
 
 import {assert} from 'chai';
-import {BadRequest} from '../../../../src/lib/http-error';
+import {BadRequest} from '../../../../src/http-error';
 
 describe(`koolaid`, () => {
   describe(`@param`, () => {

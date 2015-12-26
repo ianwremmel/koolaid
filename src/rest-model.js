@@ -1,5 +1,5 @@
 /* eslint no-unused-vars: [0] */
-import {NotFound} from './lib/http-error';
+import {NotFound} from './http-error';
 import {default as access, create, destroy} from './decorators/access';
 import method from './decorators/method';
 import param from './decorators/param';

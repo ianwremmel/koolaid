@@ -1,6 +1,6 @@
 import cls from 'continuation-local-storage';
 import {findOrCreateMap, findTargetInMap} from '../lib/map';
-import {Forbidden} from '../lib/http-error';
+import {Forbidden} from '../http-error';
 import isStatic from '../lib/is-static';
 import lodashWrap from 'lodash.wrap';
 
