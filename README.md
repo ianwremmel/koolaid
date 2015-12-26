@@ -243,4 +243,10 @@ Koolaid is a collection of [es7 decorators](https://github.com/wycats/javascript
 
 You must (a) enable the babel option "es7.decorators" and (b) make sure you're using babel 5.x.
 
-Further, some weirdness in Babel is causing the installed version to fail - you need to `npm link`.
+So far, it looks like you *must* use the babel require hook as follows in order to ensure koolaid gets transpiled without impacting your other node modules. This assumes you have `src` and `test` directories.
+
+```JavaScript
+require('babel/register')({
+  only: /(?:node_modules.*?koolaid\/src)|(?:src)|(?:test)/
+});
+```
