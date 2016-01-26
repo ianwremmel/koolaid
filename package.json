@@ -54,7 +54,7 @@
     "babel-runtime": "^6.3.19",
     "continuation-local-storage": "^3.1.4",
     "extend-error": "git://github.com/ianwremmel/extend-error.git",
-    "lodash.find": "^3.2.1",
+    "lodash.find": "^4.0.1",
     "lodash.get": "^3.7.0",
     "lodash.pick": "^3.1.0",
     "lodash.pluck": "^3.1.2",
