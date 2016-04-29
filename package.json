@@ -58,7 +58,7 @@
     "lodash.get": "^4.1.0",
     "lodash.pick": "^4.0.1",
     "lodash.pluck": "^3.1.2",
-    "lodash.remove": "^4.1.0",
+    "lodash.remove": "^4.2.1",
     "lodash.sortbyorder": "^3.4.4",
     "lodash.where": "^3.1.0",
     "lodash.wrap": "^4.0.0",
