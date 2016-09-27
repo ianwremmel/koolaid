@@ -34,7 +34,7 @@
     "grunt-shell": "^1.1.2",
     "isparta": "^4.0.0",
     "load-grunt-tasks": "^3.4.0",
-    "mocha": "^2.3.4",
+    "mocha": "^3.1.0",
     "morgan": "^1.6.1",
     "nodemon": "^1.8.1",
     "sinon": "^1.17.1",
