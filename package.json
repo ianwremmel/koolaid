@@ -16,7 +16,7 @@
     "babel-register": "^6.3.13",
     "body-parser": "^1.14.2",
     "chai": "^3.3.0",
-    "chai-as-promised": "^5.2.0",
+    "chai-as-promised": "^6.0.0",
     "documentation": "^3.0.4",
     "errorhandler": "^1.4.2",
     "eslint": "2.2.0",
