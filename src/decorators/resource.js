@@ -1,5 +1,5 @@
 import assert from 'assert';
-import lodashWrap from 'lodash.wrap';
+import {wrap as lodashWrap} from 'lodash';
 import cls from 'continuation-local-storage';
 import {getTableForModel} from '../lib/routing-table';
 import {wrap as access} from './access';

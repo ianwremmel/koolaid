@@ -1,7 +1,5 @@
 import assert from 'assert';
-import find from 'lodash.find';
-import get from 'lodash.get';
-import sortByOrder from 'lodash.sortbyorder';
+import {find, get, orderBy} from 'lodash';
 import cls from 'continuation-local-storage';
 import express from 'express';
 import {flattenRoutingTable, getRoutingTable} from './lib/routing-table';
@@ -86,7 +84,7 @@ export default function router(options) {
     // look like :id`s (e.g. /model/count needs to be mounted before /model/id).
     // Then, HEAD needs to come before GET because, aparently, express treats
     // GET as HEAD.
-    router = sortByOrder(flatRoutingTable, [`isStatic`, `verb`], [`asc`, `asc`])
+    router = orderBy(flatRoutingTable, [`isStatic`, `verb`], [`asc`, `asc`])
       .reverse()
       .reduce((router, row) => {
         const {

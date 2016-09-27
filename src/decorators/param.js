@@ -2,7 +2,7 @@ import assert from 'assert';
 import {BadRequest} from '../http-error';
 import {getCurrentMethod, getRoutingTable} from '../lib/routing-table';
 import isStatic from '../lib/is-static';
-import lodashWrap from 'lodash.wrap';
+import {wrap as lodashWrap} from 'lodash';
 
 /**
  * Use in conjuction with {@link ATSIGNmethod} to specify how methods get their

@@ -1,7 +1,4 @@
-import pick from 'lodash.pick';
-import pluck from 'lodash.pluck';
-import remove from 'lodash.remove';
-import where from 'lodash.where';
+import {pick, map, remove, filter as lodashFilter} from 'lodash';
 import uuid from 'uuid';
 import {access, method, resource, RestModel} from '../../../../src';
 import {BadRequest, Conflict, NotFound} from '../../../../src/http-error';
@@ -43,7 +40,7 @@ export default class NaiveModel extends RestModel {
 
   static destroy(filter) {
     if (filter && filter.where) {
-      pluck(remove(Object.values(models), filter.where), `id`)
+      map(remove(Object.values(models), filter.where), `id`)
         .reduce((models, id) => {
           Reflect.deleteProperty(models, id);
           return models;
@@ -60,8 +57,7 @@ export default class NaiveModel extends RestModel {
         .filter((value) => Boolean(value));
     }
 
-    // Aparently, _.where doesn`t work correctly on Objects
-    return where(Object.values(models), filter.where)
+    return lodashFilter(Object.values(models), filter.where)
       .map((data) => new (ctx.get(`Model`))(data))
       .filter((value) => Boolean(value));
   }
