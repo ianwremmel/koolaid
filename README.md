@@ -1,4 +1,6 @@
 # koolaid
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/ianwremmel/koolaid.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/ianwremmel/koolaid.svg)](https://travis-ci.org/ianwremmel/koolaid)
 [![Coverage Status](https://coveralls.io/repos/ianwremmel/koolaid/badge.svg?branch=master&service=github)](https://coveralls.io/github/ianwremmel/koolaid?branch=master)
 [![Code Climate](https://codeclimate.com/github/ianwremmel/koolaid/badges/gpa.svg)](https://codeclimate.com/github/ianwremmel/koolaid)
