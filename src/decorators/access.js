@@ -2,7 +2,7 @@ import cls from 'continuation-local-storage';
 import {findOrCreateMap, findTargetInMap} from '../lib/map';
 import {Forbidden} from '../http-error';
 import isStatic from '../lib/is-static';
-import lodashWrap from 'lodash.wrap';
+import {wrap as lodashWrap} from 'lodash';
 
 /**
  * Use to specify an access control function for the specified class or method
